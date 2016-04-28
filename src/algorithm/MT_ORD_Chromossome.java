@@ -3,6 +3,8 @@ package algorithm;
 import java.util.ArrayList;
 import java.util.Random;
 
+import utils.BinaryUtils;
+
 public class MT_ORD_Chromossome {
 
 	private int number_transports;
@@ -12,58 +14,102 @@ public class MT_ORD_Chromossome {
 	private String content;
 	
 	public MT_ORD_Chromossome(int number_transports, int number_monuments, int number_days) {
+		this(number_transports, number_monuments, number_days, "");
+	}
+	
+	public MT_ORD_Chromossome(int number_transports, int number_monuments, int number_days, String content) {
 		this.number_transports = number_transports;
 		this.number_monuments = number_monuments;
 		this.number_days = number_days;
-		this.content = "";
-		
-		generate();
+		this.content = content;
 	}
 	
-	public void generate() {
-		this.content = "";
+	public ArrayList<Integer> generate() {
+		String transports_base = BinaryUtils.zeroBaseForNNumbers(number_transports);
+		String monuments_base = BinaryUtils.zeroBaseForNNumbers(number_monuments);
 		
-		String temp = Integer.toBinaryString(number_transports-1);
-		int transports_base_size = temp.length();
-		String transports_base = "";
-		for(int i = 0; i < transports_base_size; ++i) {
-			transports_base += "0";
-		}
-		temp = Integer.toBinaryString(number_monuments-1);
-		int monuments_base_size = temp.length();
-		String monuments_base = "";
-		for(int i = 0; i < monuments_base_size; ++i) {
-			monuments_base += "0";
-		}
+		return generate(transports_base, monuments_base);		
+	}
+	
+	public ArrayList<Integer> generate(String transports_base, String monuments_base) {
+		this.content = "";
+		int transports_base_size = transports_base.length();
+		int monuments_base_size = monuments_base.length();
+		
+		ArrayList<Integer> possible_crossovers = new ArrayList<Integer>();
 		
 		// GENERATE FIRST TRANSPORTS
-
 		Random r = new Random();
 		for(int i = 0; i < this.number_days; ++i) {
 			int transport = r.nextInt(number_transports);
 			String trans_string_temp = Integer.toBinaryString(transport);
 			content += transports_base.substring(0, transports_base_size - trans_string_temp.length()) + trans_string_temp;
+			possible_crossovers.add(content.length());
 		}
-		
+
 		// GENERATE ORDERS AND TRANSPORTS
+
 		for(int i = 0; i < this.number_monuments; ++i) {
 			int monument = r.nextInt(number_monuments);
 			String mon_string_temp = Integer.toBinaryString(monument);
 			content += monuments_base.substring(0, monuments_base_size - mon_string_temp.length()) + mon_string_temp;
-			
+			possible_crossovers.add(content.length());
+
 			int transport = r.nextInt(number_transports);
 			String trans_string_temp = Integer.toBinaryString(transport);
 			content += transports_base.substring(0, transports_base_size - trans_string_temp.length()) + trans_string_temp;
+			if(i < this.number_monuments - 1)
+				possible_crossovers.add(content.length());
 		}
 		
+		return possible_crossovers;
 	}
 	
-	public String getContent() {
+	public static ArrayList<Integer> getCrossovers(int number_transports, int number_monuments, int number_days) {
+		String transports_base = BinaryUtils.zeroBaseForNNumbers(number_transports);
+		String monuments_base = BinaryUtils.zeroBaseForNNumbers(number_monuments);
+		int transports_base_size = transports_base.length();
+		int monuments_base_size = monuments_base.length();
+		String content = "";
+		
+		ArrayList<Integer> possible_crossovers = new ArrayList<Integer>();
+		
+		// GENERATE FIRST TRANSPORTS
+		Random r = new Random();
+		for(int i = 0; i < number_days; ++i) {
+			int transport = r.nextInt(number_transports);
+			String trans_string_temp = Integer.toBinaryString(transport);
+			content += transports_base.substring(0, transports_base_size - trans_string_temp.length()) + trans_string_temp;
+			possible_crossovers.add(content.length());
+		}
+
+		// GENERATE ORDERS AND TRANSPORTS
+
+		for(int i = 0; i < number_monuments; ++i) {
+			int monument = r.nextInt(number_monuments);
+			String mon_string_temp = Integer.toBinaryString(monument);
+			content += monuments_base.substring(0, monuments_base_size - mon_string_temp.length()) + mon_string_temp;
+			possible_crossovers.add(content.length());
+
+			int transport = r.nextInt(number_transports);
+			String trans_string_temp = Integer.toBinaryString(transport);
+			content += transports_base.substring(0, transports_base_size - trans_string_temp.length()) + trans_string_temp;
+			if(i < number_monuments - 1)
+				possible_crossovers.add(content.length());
+		}
+		
+		return possible_crossovers;
+	}
+	
+	public ArrayList<Integer> getCrossovers() {
+		return getCrossovers(number_transports, number_monuments, number_days);
+	}
+	
+ 	public String getContent() {
 		return content;
 	}
 	
 	public String toString() {
 		return content;
 	}
-	
 }
