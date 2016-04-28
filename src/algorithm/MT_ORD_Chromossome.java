@@ -112,4 +112,17 @@ public class MT_ORD_Chromossome {
 	public String toString() {
 		return content;
 	}
+
+	public static MT_ORD_Chromossome[] crossover(MT_ORD_Chromossome c1, MT_ORD_Chromossome c2, int index) {
+		MT_ORD_Chromossome[] result = new MT_ORD_Chromossome[2];
+		
+		String[] new_contents = Chromossome.crossover(c1.content, c2.content, index);
+		if(new_contents == null)
+			return null;
+		
+		result[0] = new MT_ORD_Chromossome(c1.number_transports, c1.number_monuments, c1.number_days, new_contents[0]);
+		result[1] = new MT_ORD_Chromossome(c1.number_transports, c1.number_monuments, c1.number_days, new_contents[1]);
+		
+		return result;
+	}
 }
