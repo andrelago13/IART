@@ -5,7 +5,7 @@ import java.util.Random;
 
 import utils.BinaryUtils;
 
-public class MT_ORD_Chromossome {
+public class MT_ORD_Chromossome implements Cloneable {
 
 	private int number_transports;
 	private int number_monuments;
@@ -108,6 +108,10 @@ public class MT_ORD_Chromossome {
  	public String getContent() {
 		return content;
 	}
+ 	
+ 	public void setContent(String content) {
+ 		this.content = content;
+ 	}
 	
 	public String toString() {
 		return content;
@@ -136,5 +140,9 @@ public class MT_ORD_Chromossome {
 
 	public int getNumDays() {
 		return number_days;
+	}
+
+	public MT_ORD_Chromossome clone() {
+		return new MT_ORD_Chromossome(number_transports, number_monuments, number_days, new String(content));
 	}
 }

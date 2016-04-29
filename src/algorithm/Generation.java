@@ -22,7 +22,6 @@ public class Generation {
 	}
 	
 	public Generation(int number, int size, ArrayList<Chromossome> initial_population) {
-		// TODO
 		this.size = size;
 		this.number = number;
 	}
