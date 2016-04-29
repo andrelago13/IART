@@ -125,4 +125,16 @@ public class MT_ORD_Chromossome {
 		
 		return result;
 	}
+
+	public int getNumTransports() {
+		return number_transports;
+	}
+
+	public int getNumMonuments() {
+		return number_monuments;
+	}
+
+	public int getNumDays() {
+		return number_days;
+	}
 }
