@@ -47,6 +47,8 @@ public class MT_ORD_Generation {
 	}
 	
 	private ArrayList<MT_ORD_Chromossome> evolveChromossomes(Random rand) {
+		// FIXME evolução depende da avaliação do cromossoma e não de uma probabilidade de crossover
+		
 		ArrayList<MT_ORD_Chromossome> evolved_chromossomes = ArrayUtils.clone(chromossomes);
 		
 		int first_cross_index = -1;
