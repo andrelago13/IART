@@ -186,6 +186,6 @@ public class MT_ORD_Chromossome implements Cloneable {
 	
 	public double adaptation() {
 		// FIXME completar com grafo
-		return 0;
+		return 1;
 	}
 }
