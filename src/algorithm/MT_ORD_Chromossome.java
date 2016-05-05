@@ -145,4 +145,47 @@ public class MT_ORD_Chromossome implements Cloneable {
 	public MT_ORD_Chromossome clone() {
 		return new MT_ORD_Chromossome(number_transports, number_monuments, number_days, new String(content));
 	}
+
+	public static int isValidContent(String content, ArrayList<Integer> possible_crossovers, int number_transports, int number_monuments, int number_days) {
+		String transports_base = BinaryUtils.zeroBaseForNNumbers(number_transports);
+		String monuments_base = BinaryUtils.zeroBaseForNNumbers(number_monuments);
+		if(content.length() != transports_base.length()*number_days + number_monuments*(transports_base.length() + monuments_base.length()))
+			return 1;
+		
+		int prev_stop = 0;
+		for(int i = 0; i < possible_crossovers.size(); ++i) {
+			String part = content.substring(prev_stop, possible_crossovers.get(i));
+			prev_stop = possible_crossovers.get(i);
+			int part_num = Integer.parseInt(part, 2);
+			if(i < number_days) {					// MT_MT_MT_MT_...
+				if(part_num >= number_transports)
+					return 2;
+			} else {								// ORD_MT_ORD_MT_...
+				if((i - number_days) % 2 == 0) {			// ORD
+					if(part_num >= number_monuments) {
+						return 3;
+					}
+				} else {									// MT
+					if(part_num >= number_transports) {
+						return 4;
+					}
+				}
+			}
+		}
+		
+		return 0;
+	}
+
+	public int isValidContent(String content) {
+		return isValidContent(content, getCrossovers());
+	}
+	
+	public int isValidContent(String content, ArrayList<Integer> possible_crossovers) {
+		return isValidContent(content, possible_crossovers, number_transports, number_monuments, number_days);
+	}
+	
+	public double adaptation() {
+		// FIXME completar com grafo
+		return 0;
+	}
 }
