@@ -16,6 +16,9 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.visualization.BasicVisualizationServer;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.control.AbstractModalGraphMouse;
+import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 
 public class SimpleGraphView {
     public SimpleGraphView() {
@@ -30,7 +33,7 @@ public class SimpleGraphView {
         layout.setSize(new Dimension(300,300));
 
         // VisualizationServer actually displays the graph
-        BasicVisualizationServer<Integer,String> vv = new BasicVisualizationServer<Integer,String>(layout);
+        VisualizationViewer<Integer,String> vv = new VisualizationViewer<Integer,String>(layout);
         vv.setPreferredSize(new Dimension(350,350)); //Sets the viewing area size
 
         // Transformer maps the vertex number to a vertex property
@@ -48,6 +51,8 @@ public class SimpleGraphView {
                 else return circle;
             }
         };
+        final AbstractModalGraphMouse graphMouse = new DefaultModalGraphMouse();
+        vv.setGraphMouse(graphMouse);
         vv.getRenderContext().setVertexFillPaintTransformer(vertexColor);
         vv.getRenderContext().setVertexShapeTransformer(vertexSize);
 
