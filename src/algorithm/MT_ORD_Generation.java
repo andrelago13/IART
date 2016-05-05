@@ -84,13 +84,19 @@ public class MT_ORD_Generation {
 	private ArrayList<MT_ORD_Chromossome> mutateChromossomes(Random rand, ArrayList<MT_ORD_Chromossome> chromossomes) {
 		ArrayList<MT_ORD_Chromossome> result = ArrayUtils.clone(chromossomes);
 		int c_size = result.size();
-	
-		for(int i = 0; i < c_size; ++i) {
-			String content = result.get(i).getContent();
-			result.get(i).setContent(BinaryUtils.probabilityNegation(rand, mutation_probability, content));
-		}
 		
-		// FIXME se cromossoma passar a ser invalido anula mutação
+		if(c_size > 0) {
+			ArrayList<Integer> crossovers = result.get(0).getCrossovers();
+			
+			for(int i = 0; i < c_size; ++i) {
+				String content = result.get(i).getContent();
+				String new_content = BinaryUtils.probabilityNegation(rand, mutation_probability, content);
+				
+				if(result.get(i).isValidContent(new_content, crossovers) == 0) {
+					result.get(i).setContent(new_content);	
+				}
+			}
+		}
 		
 		return result;
 	}

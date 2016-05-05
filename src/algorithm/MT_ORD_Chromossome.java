@@ -175,4 +175,13 @@ public class MT_ORD_Chromossome implements Cloneable {
 		
 		return 0;
 	}
+
+	public int isValidContent(String content) {
+		return isValidContent(content, getCrossovers());
+	}
+	
+	public int isValidContent(String content, ArrayList<Integer> possible_crossovers) {
+		return isValidContent(content, possible_crossovers, number_transports, number_monuments, number_days);
+	}
+	
 }
