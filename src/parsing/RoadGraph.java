@@ -1,6 +1,7 @@
 package parsing;
 
 /**
+ * @author Sandeep Sasidharan
  * 
  * Parse the OSM format to Graph Data Structure. Note that only
  * Graph elements nodes and edges are stored by this class. The actual
@@ -8,30 +9,31 @@ package parsing;
  * 
  * Reference: https://github.com/COMSYS/FootPath
  */
- 
+
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
- 
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
- 
- 
+
+
 public class RoadGraph {
- 
-	/*Class members*/
+
+	/*Class memebers*/
 	public LinkedList<GraphNode> nodes;
 	public LinkedList<DirectedEdge> edges;
- 
- 
+
+
 	public RoadGraph(){
 		/*Initialize nodes and edges as linkedlists of class type GraphNode and DirectedEdge
 		 * The functionalities of these classes can be found in MapDatabase folder*/
 		nodes = new LinkedList<GraphNode>();
 		edges = new LinkedList<DirectedEdge>();
- 
+
 	}
+	
 	/*Parser function
 	 * 
 	 * This function converts OSM in XML format to Graph elements nodes and edges. It fills
@@ -50,11 +52,11 @@ public class RoadGraph {
 		GraphWay NULL_WAY = new GraphWay();						
 		LinkedList<GraphNode> allNodes = new LinkedList<GraphNode>();	
 		LinkedList<GraphWay> allWays = new LinkedList<GraphWay>();		
- 
+
 		if(xrp == null){
 			return ret;
 		}
- 
+
 		xrp.next();
 		int eventType = xrp.getEventType();
 		/*Parsing xml based on Tags*/
@@ -81,6 +83,7 @@ public class RoadGraph {
 								tempNode.setLon(Double.parseDouble(xrp.getAttributeValue(i)));	
 							}
 						}
+
 					}
 					/*Extracting road attributes*/
 					else if(xrp.getName().equals("tag")){
@@ -89,6 +92,10 @@ public class RoadGraph {
 								if(xrp.getAttributeName(i).equals("k")
 										&& xrp.getAttributeValue(i).equals("highway")){		
 									String v = xrp.getAttributeValue(i + 1);
+									tempWay.valid = true;
+									if(v.equals("service") || v.equals("pedestrian") || v.equals("track") || v.equals("bus_guideway") || v.equals("footway") || v.equals("bridleway") || v.equals("steps") || v.equals("path") || v.equals("cycleway")) {
+										tempWay.valid = false;
+									}
 									tempWay.setType(v);
 									tempWay.setSpeedMax(OsmConstants.roadTypeToSpeed(v));
 								} else if(xrp.getAttributeName(i).equals("k")
@@ -104,6 +111,10 @@ public class RoadGraph {
 									if(ot.maxspeed != -1){
 										tempWay.setSpeedMax(ot.maxspeed);
 									}
+								} else if(xrp.getAttributeName(i).equals("k")
+										&& xrp.getAttributeValue(i).equals("building")){		
+									if(tempWay != NULL_WAY)
+										tempWay.valid = false;
 								}
 							}
 						}
@@ -134,12 +145,12 @@ public class RoadGraph {
 						allNodes.add(tempNode);
 						tempNode = NULL_NODE;		
 					} else if(xrp.getName().equals("tag")){							
- 
+
 					} else if(xrp.getName().equals("way")){							
 						allWays.add(tempWay);
 						tempWay = NULL_WAY;
 					} else if(xrp.getName().equals("nd")){							
- 
+
 					}
 				}
 				break;
@@ -149,6 +160,9 @@ public class RoadGraph {
 		/*Extracting the Node - Edge relations*/
 		LinkedList<GraphWay> remainingWays = new LinkedList<GraphWay>();
 		for(GraphWay way : allWays){	
+			if(!way.valid) {
+				continue;
+			}
 			LinkedList<Long> refs = way.getRefs();
 			boolean stop = false;
 			for(Long ref : refs){							
@@ -167,41 +181,42 @@ public class RoadGraph {
 		if(remainingWays.size() == 0)	
 			return false;
 		for(GraphWay way : remainingWays){
- 
+
 			GraphNode firstNode = getNode(allNodes,(long)way.getRefs().get(0));
 			for(int i = 1; i <= way.getRefs().size() - 1; i++){
 				GraphNode nextNode = getNode(allNodes,(long)way.getRefs().get(i));
 				double len = distanceInMilesBetweenPoints(firstNode.getLat(),firstNode.getLon(),
 						nextNode.getLat(),nextNode.getLon());
- 
+
 				if(way.getType()==null){
 					way.setSpeedMax(30);
 				}
 				float travel_time_weight = (float) (len/way.getSpeedMax());
- 
+
 				DirectedEdge tempEdge = new DirectedEdge(firstNode, nextNode,
 						len, way.getSpeedMax(), way.getOneway(),way.getType(),
 						way.getName(),travel_time_weight,way.getId());
 				edges.add(tempEdge);
- 
+
 				if(!nodes.contains(firstNode)){
 					nodes.add(firstNode);							
 				}
 				firstNode = nextNode;
 			}
- 
+
 			if(!nodes.contains(firstNode)){
 				nodes.add(firstNode);										
 			}
- 
+
 		}
 		
 		/*This function returns true if parsing is successful.
 		 * 
 		 * The extracted nodes and edges are stored within this class as memebers*/
- 
+
 		return ret;
 	}
+	
 	/*Inner class defined for specifically extracting the maximum speed attribute 
 	 * and road traffic direction (oneWay or not) of the edges
 	 * Refer OSM documentation for more details on OSM data specs
@@ -209,7 +224,7 @@ public class RoadGraph {
 	private OtherTags parseOtherTags(String v) {
 		String[] other_tags = v.split(",");
 		OtherTags output = new OtherTags();
- 
+
 		for(int i =0; i< other_tags.length;i++){
 			Pattern p = Pattern.compile("\"([^\"]*)\"");
 			Matcher m = p.matcher(other_tags[i]);
@@ -221,7 +236,7 @@ public class RoadGraph {
 				else if(m.group(1).equals("maxspeed")){
 					flag = 2;
 				}else{
- 
+
 					if(flag ==1){
 						if(m.group(1).equals("yes"))
 							output.isOneWay = true;
@@ -241,9 +256,10 @@ public class RoadGraph {
 				}
 			}
 		}
- 
+
 		return output;
 	}
+	
 	// This is the slower version which is used during parsing
 	private GraphNode getNode(LinkedList<GraphNode> list, long id){
 		for(GraphNode node: list){
@@ -252,6 +268,7 @@ public class RoadGraph {
 		}
 		return null;
 	}
+	
 	/**
 	 * Returns the distance between two points in Kilometers given in latitude/longitude
 	 * @param lat_1 latitude of first point
@@ -270,7 +287,7 @@ public class RoadGraph {
 		lon_2 = Math.toRadians(lon_2);
 		dLon = Math.toRadians(dLon);
 		dLat = Math.toRadians(dLat);
- 
+
 		double r = 6378137; // km
 		double a = Math.sin(dLat/2)*Math.sin(dLat/2) + 
 				Math.cos(lat_1)*Math.cos(lat_2) *
@@ -278,6 +295,7 @@ public class RoadGraph {
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 		return c*r;
 	}
+	
 	/**
 	 * Returns the distance between two points in miles given in latitude/longitude
 	 * @param lat_1 latitude of first point
@@ -298,15 +316,16 @@ public class RoadGraph {
 				* Math.cos(Math.toRadians(dest_lat));
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 		double dist = earthRadius * c;
- 
+
 		return dist;
 	}
+	
 	/*Inner class defined to store the road attributes temporarily*/
 	class OtherTags
 	{
 		private boolean isOneWay;
 		private int maxspeed;
- 
+
 		OtherTags(boolean isOneWay, int maxspeed)
 		{
 			this.isOneWay = isOneWay;
@@ -318,5 +337,5 @@ public class RoadGraph {
 			this.maxspeed = -1;
 		}
 	}
- 
+
 }
