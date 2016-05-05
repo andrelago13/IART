@@ -18,6 +18,8 @@ public class GraphWay {
     private String other_tags;
     private int speedMax;
     private boolean isOneway;
+    
+    public boolean valid = false;
  
 	public GraphWay() {
 		this.refs = new LinkedList();
