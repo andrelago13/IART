@@ -21,7 +21,7 @@ public class ParseOSM {
 		XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
 		factory.setNamespaceAware(true);
 		XmlPullParser xpp = factory.newPullParser();
-		xpp.setInput (new FileReader ("C:\\Users\\Asus\\Documents\\GitHub\\IART\\data\\map.osm"));
+		xpp.setInput (new FileReader ("data/map.osm"));
  
 		g.osmGraphParser(xpp);
 		nodes = g.nodes;
