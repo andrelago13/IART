@@ -184,4 +184,8 @@ public class MT_ORD_Chromossome implements Cloneable {
 		return isValidContent(content, possible_crossovers, number_transports, number_monuments, number_days);
 	}
 	
+	public double adaptation() {
+		// FIXME completar com grafo
+		return 0;
+	}
 }
