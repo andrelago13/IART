@@ -46,8 +46,7 @@ public class MT_ORD_Generation {
 		return chromossomes.get(0).getNumDays();
 	}
 	
-	private ArrayList<MT_ORD_Chromossome> evolveChromossomes(Random rand) {
-				
+	public static ArrayList<MT_ORD_Chromossome> evolveChromossomes(Random rand, ArrayList<MT_ORD_Chromossome> chromossomes, double crossover_probability) {
 		int num_chromossomes = chromossomes.size();
 		
 		ArrayList<Double> adaptation = getAdaptation(chromossomes);
@@ -106,7 +105,11 @@ public class MT_ORD_Generation {
 		return selected_chromossomes;
 	}
 	
-	private ArrayList<MT_ORD_Chromossome> mutateChromossomes(Random rand, ArrayList<MT_ORD_Chromossome> chromossomes) {
+	private ArrayList<MT_ORD_Chromossome> evolveChromossomes(Random rand) {
+		return evolveChromossomes(rand, chromossomes, crossover_probability);
+	}
+	
+	public static ArrayList<MT_ORD_Chromossome> mutateChromossomes(Random rand, ArrayList<MT_ORD_Chromossome> chromossomes, double mutation_probability) {
 		ArrayList<MT_ORD_Chromossome> result = ArrayUtils.clone(chromossomes);
 		int c_size = result.size();
 		
@@ -124,6 +127,10 @@ public class MT_ORD_Generation {
 		}
 		
 		return result;
+	}
+	
+	private ArrayList<MT_ORD_Chromossome> mutateChromossomes(Random rand, ArrayList<MT_ORD_Chromossome> chromossomes) {
+		return mutateChromossomes(rand, chromossomes, mutation_probability);
 	}
 	
 	public MT_ORD_Generation evolve() {
