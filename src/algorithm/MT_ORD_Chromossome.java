@@ -32,7 +32,7 @@ public class MT_ORD_Chromossome implements Cloneable {
 	}
 	
 	public ArrayList<Integer> generate(String transports_base, String monuments_base) {
-		this.content = "";
+		this.content =  "";
 		int transports_base_size = transports_base.length();
 		int monuments_base_size = monuments_base.length();
 		
