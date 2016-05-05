@@ -90,6 +90,8 @@ public class MT_ORD_Generation {
 			result.get(i).setContent(BinaryUtils.probabilityNegation(rand, mutation_probability, content));
 		}
 		
+		// FIXME se cromossoma passar a ser invalido anula mutação
+		
 		return result;
 	}
 	
