@@ -1,14 +1,7 @@
 package Main;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.LinkedList;
-
-import algorithm.Generation;
-import algorithm.MT_ORD_Chromossome;
-import algorithm.MT_ORD_Factory;
-import algorithm.MT_ORD_Generation;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Paint;
@@ -27,12 +20,12 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import parsing.ParseOSM;
+import parsing.OSMParser;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
-import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
@@ -41,26 +34,19 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import graph.DirectedEdge;
 import graph.GraphNode;
 import graph.RoadGraph;
+import gui.GraphFrame;
 
 public class Test {
 	
 	private GraphNode src = null;
 
 	public Test() throws Exception {
-		System.out.println("Run started at"+ LocalDateTime.now() );
-		XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-		factory.setNamespaceAware(true);
-		XmlPullParser xpp = factory.newPullParser();
-		xpp.setInput (new FileReader ("data/porto-large.osm"));
-		
-		RoadGraph roadgraph = new RoadGraph();
-		roadgraph.osmGraphParser(xpp);
+				
+		RoadGraph roadgraph = OSMParser.parseOSM("data/porto-large.osm");
 		LinkedList<GraphNode> nodes = roadgraph.nodes;
 		LinkedList<DirectedEdge> edges = roadgraph.edges;
-
-		System.out.println("Parsing ended at"+ LocalDateTime.now() );
-		System.out.println("Edges = "+edges.size());
-		System.out.println("Nodes = "+nodes.size());
+		
+		GraphFrame gf = new GraphFrame(roadgraph);
 		
 		// > 41.13982
 		// < -8.59959
@@ -70,7 +56,7 @@ public class Test {
 		for(int i = 0; i < nodes.size(); ++i) {
 			GraphNode n = nodes.get(i);
 			//if(n.getLat() > 41.13982 && n.getLon() < -8.59959 && n.getLon() > -8.63018)
-			osm_graph.addVertex(nodes.get(i));
+			osm_graph.addVertex(n);
 		}
 		for(int i = 0; i < edges.size(); ++i) {
 			GraphNode from = edges.get(i).from();
@@ -87,7 +73,7 @@ public class Test {
         g.addEdge("Another Edge", 1, 4);*/
 
         // Layout implements the graph drawing logic
-        Layout<GraphNode, DirectedEdge> layout = new CircleLayout<GraphNode, DirectedEdge>(osm_graph);
+        Layout<GraphNode, DirectedEdge> layout = new StaticLayout<GraphNode, DirectedEdge>(osm_graph);
         layout.setSize(new Dimension(977,650));
 //976.1869639183353
         double min_lat = 1000000000;
@@ -189,7 +175,7 @@ public class Test {
 					src = arg0;
 				} else {
 					System.out.println("calculating");
-					roadgraph.shortestPathDijkstra(src, arg0);
+					//roadgraph.shortestPathDijkstra(src, arg0);
 					
 					src = null;
 				}
@@ -213,20 +199,12 @@ public class Test {
 
     public static void main(String[] args) {
         try {
-			new Test();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			GraphFrame gf = new GraphFrame("data/porto-small.osm");
+			gf.initiate();
+		} catch (IOException | XmlPullParserException e) {
 			e.printStackTrace();
 		}
     }
-	
-	/*ublic static void main(String[] args) {
 
-		MT_ORD_Generation g = new MT_ORD_Generation(0, 1, 1, 4, 4, 3);
-		System.out.println(g);
-		System.out.println("");
-		g = g.evolve();
-		System.out.println(g);
-	}*/
 	
 }

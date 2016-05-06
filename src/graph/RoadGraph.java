@@ -11,6 +11,7 @@ package graph;
  */
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,6 +37,10 @@ public class RoadGraph {
 
 	}
 	
+	public boolean osmGraphParser(XmlPullParser xrp) throws XmlPullParserException, IOException {
+		return osmGraphParser(xrp, true);
+	}
+	
 	/*Parser function
 	 * 
 	 * This function converts OSM in XML format to Graph elements nodes and edges. It fills
@@ -44,7 +49,7 @@ public class RoadGraph {
 	 * Refer OSM documentation for more details on OSM data specifications
 	 * 
 	 * */
-	public boolean osmGraphParser(XmlPullParser xrp) throws XmlPullParserException, IOException{
+	public boolean osmGraphParser(XmlPullParser xrp, boolean print) throws XmlPullParserException, IOException {
 		/*Initialization of temporary variables */
 		boolean ret = false;
 		boolean isOsmData = false;	
@@ -61,6 +66,11 @@ public class RoadGraph {
 
 		xrp.next();
 		int eventType = xrp.getEventType();
+		
+		if(print) {
+			System.out.println("Starting XML parsing [ " + LocalDateTime.now() + " ]");
+		}
+		
 		/*Parsing xml based on Tags*/
 		while (eventType != XmlPullParser.END_DOCUMENT) {
 			switch(eventType){
@@ -159,6 +169,11 @@ public class RoadGraph {
 			}
 			eventType = xrp.next();
 		}
+
+		if(print) {
+			System.out.println("Starting node-edge relation extraction [ " + LocalDateTime.now() + " ]");
+		}
+		
 		/*Extracting the Node - Edge relations*/
 		LinkedList<GraphWay> remainingWays = new LinkedList<GraphWay>();
 		for(GraphWay way : allWays){	
@@ -214,6 +229,10 @@ public class RoadGraph {
 				nodes.add(firstNode);										
 			}
 
+		}
+
+		if(print) {
+			System.out.println("Finnishing [ " + LocalDateTime.now() + " ]");
 		}
 		
 		/*This function returns true if parsing is successful.
@@ -344,110 +363,5 @@ public class RoadGraph {
 		}
 	}
 
-	public ArrayList<DirectedEdge> shortestPathDijkstra(GraphNode src, GraphNode dst) {
-		// TODO Dijkstra
 		
-		/*
-			Foreach node set distance[node] = HIGH
-			SettledNodes = empty
-			UnSettledNodes = empty
-		 */	
-		for(GraphNode n : nodes) {
-			n.distance = Double.MAX_VALUE;
-			n.selected = false;
-			n.shortestPath = null;
-		}
-		for(DirectedEdge e : edges) {
-			e.selected = false;
-		}
-		LinkedList<GraphNode> settledNodes = new LinkedList<GraphNode>();
-		LinkedList<GraphNode> unsettledNodes = new LinkedList<GraphNode>();
-		
-		/*
-			Add sourceNode to UnSettledNodes
-			distance[sourceNode]= 0
-		 */
-		unsettledNodes.add(src);
-		src.distance = 0;
-		
-		/*
-			while (UnSettledNodes is not empty) {
-  				evaluationNode = getNodeWithLowestDistance(UnSettledNodes)
-  				remove evaluationNode from UnSettledNodes 
-    			add evaluationNode to SettledNodes
-    			evaluatedNeighbors(evaluationNode)
-			}
-		 */
-		GraphNode evaluationNode = null;
-		while(!unsettledNodes.isEmpty()) {
-			evaluationNode = getNodeWithLowestDistance(unsettledNodes);
-			evaluationNode.selected = true;
-			if(evaluationNode == dst) {
-				System.out.println(evaluationNode.distance);
-				break;
-			}
-			unsettledNodes.remove(evaluationNode);
-			settledNodes.add(evaluationNode);
-			unsettledNodes = evaluatedNeighbors(evaluationNode, unsettledNodes, settledNodes);
-		}
-		
-		while(evaluationNode != null && evaluationNode != src && evaluationNode.shortestPath != null) {
-			evaluationNode.shortestPath.selected = true;
-			evaluationNode = evaluationNode.shortestPath.from();
-		}
-		
-		return null;
-	}
-		
-	private static GraphNode getNodeWithLowestDistance(LinkedList<GraphNode> nodes) {
-		GraphNode result = null;
-		double minDist = Double.MAX_VALUE;
-
-		/*
-			getNodeWithLowestDistance(UnSettledNodes){
-  			find the node with the lowest distance in UnSettledNodes and return it 
-		 */
-		for(GraphNode n : nodes) {
-			if(n.distance < minDist) {
-				result = n;
-				minDist = n.distance;
-			}
-		}
-		return result;
-	}
-	
-	private static LinkedList<GraphNode> evaluatedNeighbors(GraphNode evaluationNode, LinkedList<GraphNode> unsettledNodes, LinkedList<GraphNode> settledNodes) {
-		// TODO
-		/*
-		evaluatedNeighbors(evaluationNode){
-		  Foreach destinationNode which can be reached via an edge from evaluationNode AND which is not in SettledNodes {
-		    edgeDistance = getDistance(edge(evaluationNode, destinationNode))
-		    newDistance = distance[evaluationNode] + edgeDistance
-		    if (distance[destinationNode]  > newDistance) {
-		      distance[destinationNode]  = newDistance 
-		      add destinationNode to UnSettledNodes
-		    }
-		  }
-		} 
-		*/
-		
-		LinkedList<DirectedEdge> outgoing = evaluationNode.from();
-		for(DirectedEdge outgoingEdge : outgoing) {
-			GraphNode dest = outgoingEdge.to();
-			if(settledNodes.contains(dest))
-				continue;
-			
-			double newDistance = evaluationNode.distance + outgoingEdge.getLength();
-			if(dest.distance > newDistance) {
-				dest.distance = newDistance;
-				dest.shortestPath = outgoingEdge;
-				unsettledNodes.add(dest);
-			}
-		}
-		
-		return unsettledNodes;
-	}
-
-	
-	
 }

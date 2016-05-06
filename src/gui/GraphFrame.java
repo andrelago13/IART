@@ -1,0 +1,227 @@
+package gui;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Paint;
+import java.awt.Shape;
+import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.LinkedList;
+
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.StaticLayout;
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.SparseGraph;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.control.AbstractModalGraphMouse;
+import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
+import edu.uci.ics.jung.visualization.control.GraphMouseListener;
+import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import graph.Dijkstra;
+import graph.DirectedEdge;
+import graph.GraphNode;
+import graph.RoadGraph;
+
+import javax.swing.JFrame;
+
+import org.apache.commons.collections15.Transformer;
+import org.xmlpull.v1.XmlPullParserException;
+
+import parsing.OSMParser;
+
+@SuppressWarnings("serial")
+public class GraphFrame extends JFrame {
+	
+	private Graph<GraphNode, DirectedEdge> graph;
+	
+	private int SIZE_HORIZONTAL = 977;
+	private int SIZE_VERTICAL = 600;
+	
+	private Layout<GraphNode, DirectedEdge> layout;
+	private VisualizationViewer<GraphNode,DirectedEdge> vv;
+	private Transformer<GraphNode,Paint> vertexColor;
+    private Transformer<GraphNode,Shape> vertexSize;
+    private Transformer<DirectedEdge, Paint> edgePaint;
+    private AbstractModalGraphMouse graphMouse;
+    private GraphMouseListener<GraphNode> graphMouseListener;
+    
+    private GraphNode clickedSource = null;
+	
+    public GraphFrame(String filepath) throws FileNotFoundException, IOException, XmlPullParserException {
+    	this(OSMParser.parseOSM(filepath));
+    }
+    
+	public GraphFrame(RoadGraph rg) {
+		this(rg, "Tourist Guide");
+	}
+	
+	public GraphFrame(RoadGraph rg, String title) {
+		super(title);
+		processGraph(rg);
+		initializeVisualization();
+		processGraphPositions();
+			
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	private void processGraph(RoadGraph rg) {
+		this.graph = new SparseGraph<GraphNode, DirectedEdge>();
+		LinkedList<GraphNode> nodes = rg.nodes;
+		LinkedList<DirectedEdge> edges = rg.edges;
+		
+		for(int i = 0; i < nodes.size(); ++i) {
+			this.graph.addVertex(nodes.get(i));
+		}
+		for(int i = 0; i < edges.size(); ++i) {
+			this.graph.addEdge(edges.get(i), edges.get(i).from(), edges.get(i).to());
+		}
+	}
+	
+	private void processGraphPositions() {
+		LinkedList<GraphNode> nodes = new LinkedList<GraphNode>(graph.getVertices());
+		
+		double min_lat = 1000000000;
+		double max_lat = -1000000000;
+		double min_lon = 1000000000;
+		double max_lon = -1000000000; 
+		
+		for(int i = 0; i < nodes.size(); ++i) {
+			double lat = nodes.get(i).getLat();
+			double lon = nodes.get(i).getLon();
+			
+			if(lat > max_lat)
+				max_lat = lat;
+			if(lat < min_lat)
+				min_lat = lat;
+			
+			if(lon > max_lon)
+				max_lon = lon;
+			if(lon < min_lon)
+				min_lon = lon;
+		}
+		//-8.63018,41.13982,-8.59959,41.15259
+		min_lat = 41.13982;
+		max_lat = 41.15259;
+		min_lon = -8.63018;
+		max_lon = -8.59959;
+		
+		for(int i = 0; i < nodes.size(); ++i) {
+			double lat = nodes.get(i).getLat();
+			double lon = nodes.get(i).getLon();
+			
+			lon = 977*(lon-min_lon)/(max_lon-min_lon);
+			lat = 650 - (650*(lat-min_lat)/(max_lat-min_lat));
+			
+			layout.setLocation(nodes.get(i), new Point2D.Double(lon,lat));
+		}
+	}
+	
+	private void initializeVisualization() {
+		initializeVertexColor();
+		initializeVertexSize();
+		initializeVertexPaint();
+		initializeGraphMouse();
+		initializeGraphMouseListener();
+		
+		
+		initializeLayout();
+		initializeVisualizationViewer();
+		
+		
+		vv.setGraphMouse(graphMouse);
+        vv.getRenderContext().setVertexFillPaintTransformer(vertexColor);
+        vv.getRenderContext().setVertexShapeTransformer(vertexSize);
+        vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode,DirectedEdge>());
+        vv.getRenderContext().setEdgeDrawPaintTransformer(edgePaint);
+        vv.addGraphMouseListener(graphMouseListener);
+        
+        getContentPane().add(vv); 
+        pack();
+	}
+	
+	private void initializeVertexColor() {
+		vertexColor = new Transformer<GraphNode,Paint>() {
+	        public Paint transform(GraphNode i) {
+	            if(i.selected) return Color.YELLOW;
+	            return Color.GRAY;
+	        }
+	    };
+	}
+	
+	private void initializeVertexSize() {
+		vertexSize = new Transformer<GraphNode,Shape>(){
+	        public Shape transform(GraphNode i){
+	            Ellipse2D circle = new Ellipse2D.Double(-5, -5, 10, 10);
+	            // in this case, the vertex is twice as large
+	            if(i.getId() == 2) return AffineTransform.getScaleInstance(2, 2).createTransformedShape(circle);
+	            else return circle;
+	            //return AffineTransform.getScaleInstance(0, 0).createTransformedShape(circle);
+	        }
+	    };
+	}
+	
+	private void initializeVertexPaint() {
+		edgePaint = new Transformer<DirectedEdge, Paint>() {
+	        public Paint transform(DirectedEdge e) {
+	        	if(e.selected) {
+	        		return Color.YELLOW;
+	        	}
+	            return Color.BLACK;
+	        }
+	    };
+	}
+	
+	private void initializeGraphMouse() {
+		graphMouse = new DefaultModalGraphMouse<GraphNode, DirectedEdge>();
+	}
+	
+	private void initializeGraphMouseListener() {
+		graphMouseListener = new GraphMouseListener<GraphNode>() {
+			@Override
+			public void graphClicked(GraphNode arg0, MouseEvent arg1) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void graphPressed(GraphNode node, MouseEvent event) {
+				// TODO Auto-generated method stub				
+				if(clickedSource == null) {
+					System.out.println("Selected source node.");
+					clickedSource = node;
+				} else {
+					System.out.println("Selected destination node. Calculating with Dijkstra [ " + LocalDateTime.now() + " ]");
+					Dijkstra.shortestPath(graph, clickedSource, node);
+					System.out.println("Path calculated [ " + LocalDateTime.now() + " ]");
+					
+					clickedSource = null;
+				}
+			}
+
+			@Override
+			public void graphReleased(GraphNode arg0, MouseEvent arg1) {
+				// TODO Auto-generated method stub
+			}
+        };
+	}
+
+	private void initializeLayout() {
+		layout = new StaticLayout<GraphNode, DirectedEdge>(graph);
+        layout.setSize(new Dimension(SIZE_HORIZONTAL,SIZE_VERTICAL));
+	}
+	
+	private void initializeVisualizationViewer() {
+		vv = new VisualizationViewer<GraphNode,DirectedEdge>(layout);
+        vv.setPreferredSize(new Dimension(SIZE_HORIZONTAL,SIZE_VERTICAL));
+	}
+
+	public void initiate() {
+		setVisible(true);
+	}
+}
