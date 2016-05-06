@@ -22,7 +22,7 @@ public class DirectedEdge implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -9074416579376692922L;
- 
+	 
 	private final GraphNode startNode;
     private final GraphNode endNode;
     private double length;
@@ -34,8 +34,9 @@ public class DirectedEdge implements Serializable{
     
     private float weight;
     private long way_id; 
-    
-    public Boolean selected = false;
+
+	public boolean processed = false;
+	public boolean partOfShortestPath = false;
  
     /**
      * Constructor

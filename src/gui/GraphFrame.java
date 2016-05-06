@@ -149,7 +149,8 @@ public class GraphFrame extends JFrame {
 	private void initializeVertexColor() {
 		vertexColor = new Transformer<GraphNode,Paint>() {
 	        public Paint transform(GraphNode i) {
-	            if(i.selected) return Color.YELLOW;
+	            if(i.partOfShortestPath) return Color.GREEN;
+	            if(i.processed) return Color.YELLOW;
 	            return Color.GRAY;
 	        }
 	    };
@@ -170,9 +171,14 @@ public class GraphFrame extends JFrame {
 	private void initializeVertexPaint() {
 		edgePaint = new Transformer<DirectedEdge, Paint>() {
 	        public Paint transform(DirectedEdge e) {
-	        	if(e.selected) {
+	        	if(e.partOfShortestPath) {
+	        		return Color.GREEN;
+	        	}
+	        	
+	        	if(e.processed) {
 	        		return Color.YELLOW;
 	        	}
+	        	
 	            return Color.BLACK;
 	        }
 	    };
@@ -197,8 +203,8 @@ public class GraphFrame extends JFrame {
 					clickedSource = node;
 				} else {
 					System.out.println("Selected destination node. Calculating with Dijkstra [ " + LocalDateTime.now() + " ]");
-					Dijkstra.shortestPath(graph, clickedSource, node);
-					System.out.println("Path calculated [ " + LocalDateTime.now() + " ]");
+					LinkedList<DirectedEdge> edges = Dijkstra.shortestPath(graph, clickedSource, node);
+					System.out.println("Path calculated [ " + LocalDateTime.now() + " ], " + edges.size() + " edges.");
 					
 					clickedSource = null;
 				}

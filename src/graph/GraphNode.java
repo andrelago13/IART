@@ -12,13 +12,14 @@ import java.util.Set;
  *
  */
 public class GraphNode implements Serializable{
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -951013750518377697L;
-	/**
-	 * 
-	 */
+	
+	public static enum PathPart {
+		SOURCE,
+		PATH,
+		DESTINATION
+	}
  
 	private double lon;
 	private double lat;
@@ -28,8 +29,10 @@ public class GraphNode implements Serializable{
 	private LinkedList<DirectedEdge> to = new LinkedList<DirectedEdge>();
 	
 	public double distance;
-	public boolean selected = false;
+	public boolean processed = false;
+	public boolean partOfShortestPath = false;
 	public DirectedEdge shortestPath = null;
+	public PathPart pathPart = PathPart.PATH;
  
 	public GraphNode() {
 		this.lon = 0.0;

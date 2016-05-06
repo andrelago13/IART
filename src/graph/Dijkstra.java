@@ -7,19 +7,24 @@ import edu.uci.ics.jung.graph.Graph;
 
 public class Dijkstra {
 
-	public static ArrayList<DirectedEdge> shortestPath(Graph<GraphNode, DirectedEdge> graph, GraphNode src, GraphNode dst) {
+	public static LinkedList<DirectedEdge> shortestPath(Graph<GraphNode, DirectedEdge> graph, GraphNode src, GraphNode dst) {
 		// TODO fazer retorno
-		// TODO corrigir atributos nós e edges
 		LinkedList<GraphNode> nodes = new LinkedList<GraphNode>(graph.getVertices());
 		LinkedList<DirectedEdge> edges = new LinkedList<DirectedEdge>(graph.getEdges());
-		
+
 		for(GraphNode n : nodes) {
 			n.distance = Double.MAX_VALUE;
-			n.selected = false;
+			n.processed = false;
+			n.partOfShortestPath = false;
 			n.shortestPath = null;
+			n.pathPart = GraphNode.PathPart.PATH;
 		}
+		src.pathPart = GraphNode.PathPart.SOURCE;
+		dst.pathPart = GraphNode.PathPart.DESTINATION;
+		
 		for(DirectedEdge e : edges) {
-			e.selected = false;
+			e.processed = false;
+			e.partOfShortestPath = false;
 		}
 		LinkedList<GraphNode> settledNodes = new LinkedList<GraphNode>();
 		LinkedList<GraphNode> unsettledNodes = new LinkedList<GraphNode>();
@@ -30,7 +35,7 @@ public class Dijkstra {
 		GraphNode evaluationNode = null;
 		while(!unsettledNodes.isEmpty()) {
 			evaluationNode = getNodeWithLowestDistance(unsettledNodes);
-			evaluationNode.selected = true;
+			evaluationNode.processed = true;
 			if(evaluationNode == dst) {
 				System.out.println(evaluationNode.distance);
 				break;
@@ -40,12 +45,17 @@ public class Dijkstra {
 			unsettledNodes = evaluatedNeighbors(evaluationNode, unsettledNodes, settledNodes);
 		}
 		
+		LinkedList<DirectedEdge> result = new LinkedList<DirectedEdge>();
+		
 		while(evaluationNode != null && evaluationNode != src && evaluationNode.shortestPath != null) {
-			evaluationNode.shortestPath.selected = true;
+			evaluationNode.partOfShortestPath = true;
+			evaluationNode.shortestPath.partOfShortestPath = true;
+			result.addFirst(evaluationNode.shortestPath);
 			evaluationNode = evaluationNode.shortestPath.from();
 		}
+		src.partOfShortestPath = true;
 		
-		return null;
+		return result;
 	}
 		
 	public static GraphNode getNodeWithLowestDistance(LinkedList<GraphNode> nodes) {
@@ -64,6 +74,7 @@ public class Dijkstra {
 	private static LinkedList<GraphNode> evaluatedNeighbors(GraphNode evaluationNode, LinkedList<GraphNode> unsettledNodes, LinkedList<GraphNode> settledNodes) {
 		LinkedList<DirectedEdge> outgoing = evaluationNode.from();
 		for(DirectedEdge outgoingEdge : outgoing) {
+			outgoingEdge.processed = true;
 			GraphNode dest = outgoingEdge.to();
 			if(settledNodes.contains(dest))
 				continue;

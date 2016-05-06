@@ -37,8 +37,21 @@ import graph.RoadGraph;
 import gui.GraphFrame;
 
 public class Test {
+
+    public static void main(String[] args) {
+        try {
+			GraphFrame gf = new GraphFrame("data/porto-small.osm");
+			gf.initiate();
+		} catch (IOException | XmlPullParserException e) {
+			e.printStackTrace();
+		}
+    }
+
 	
-	private GraphNode src = null;
+}
+
+/*
+private GraphNode src = null;
 
 	public Test() throws Exception {
 				
@@ -65,12 +78,6 @@ public class Test {
 			//if(from.getLat() > 41.13982 && from.getLon() < -8.59959 && from.getLon() > -8.63018 && to.getLat() > 41.13982 && to.getLon() < -8.59959 && to.getLon() > -8.63018)
 			osm_graph.addEdge(edges.get(i), from, to);
 		}
-		
-        // Create a graph with Integer vertices and String edges
-        /*Graph<Integer, String> g = new SparseGraph<Integer, String>();
-        for(int i = 0; i < 5; i++) g.addVertex(i);
-        g.addEdge("Edge", 1, 2);
-        g.addEdge("Another Edge", 1, 4);*/
 
         // Layout implements the graph drawing logic
         Layout<GraphNode, DirectedEdge> layout = new StaticLayout<GraphNode, DirectedEdge>(osm_graph);
@@ -118,7 +125,7 @@ public class Test {
         // Transformer maps the vertex number to a vertex property
         Transformer<GraphNode,Paint> vertexColor = new Transformer<GraphNode,Paint>() {
             public Paint transform(GraphNode i) {
-                if(i.selected) return Color.YELLOW;
+                if(i.processed) return Color.YELLOW;
                 return Color.GRAY;
             }
         };
@@ -134,7 +141,7 @@ public class Test {
         
         Transformer<DirectedEdge, Paint> edgePaint = new Transformer<DirectedEdge, Paint>() {
             public Paint transform(DirectedEdge e) {
-            	if(e.selected) {
+            	if(e.partOfShortestPath) {
             		return Color.YELLOW;
             	}
                 return Color.BLACK;
@@ -160,15 +167,15 @@ public class Test {
 			@Override
 			public void graphPressed(GraphNode arg0, MouseEvent arg1) {
 				// TODO Auto-generated method stub
-				/*System.out.println(arg0.from().size());
-				System.out.println(arg0.to().size());
-				
-				if(arg0.from().size() > 0) {
-					System.out.println(arg0.getLat());
-					System.out.println("[ " + arg0.from().get(0).from().getLat() + " , " + arg0.from().get(0).to().getLat() + " ]");
-				}
-				
-				System.out.println();*/
+//				System.out.println(arg0.from().size());
+//				System.out.println(arg0.to().size());
+//				
+//				if(arg0.from().size() > 0) {
+//					System.out.println(arg0.getLat());
+//					System.out.println("[ " + arg0.from().get(0).from().getLat() + " , " + arg0.from().get(0).to().getLat() + " ]");
+//				}
+//				
+//				System.out.println();
 				
 				if(src == null) {
 					System.out.println("pressed first");
@@ -195,16 +202,5 @@ public class Test {
         frame.getContentPane().add(vv); 
         frame.pack();
         frame.setVisible(true);    
-    }
-
-    public static void main(String[] args) {
-        try {
-			GraphFrame gf = new GraphFrame("data/porto-small.osm");
-			gf.initiate();
-		} catch (IOException | XmlPullParserException e) {
-			e.printStackTrace();
-		}
-    }
-
-	
-}
+    } 
+*/
