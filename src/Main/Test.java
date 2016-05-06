@@ -51,7 +51,7 @@ public class Test {
 		XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
 		factory.setNamespaceAware(true);
 		XmlPullParser xpp = factory.newPullParser();
-		xpp.setInput (new FileReader ("data/map2"));
+		xpp.setInput (new FileReader ("data/porto-large.osm"));
 		
 		RoadGraph roadgraph = new RoadGraph();
 		roadgraph.osmGraphParser(xpp);
