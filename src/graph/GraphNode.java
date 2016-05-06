@@ -1,6 +1,7 @@
 package graph;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.Set;
  
  
@@ -23,6 +24,11 @@ public class GraphNode implements Serializable{
 	private double lat;
 	private long id;
 	
+	private LinkedList<DirectedEdge> from = new LinkedList<DirectedEdge>();
+	private LinkedList<DirectedEdge> to = new LinkedList<DirectedEdge>();
+	
+	public double distance;
+	public boolean selected = false;
  
 	public GraphNode() {
 		this.lon = 0.0;
@@ -46,6 +52,25 @@ public class GraphNode implements Serializable{
 	
 	public double getLat() {
 		return lat;
+	}
+	
+	
+	public void addFrom(DirectedEdge edge) {
+		if(!from.contains(edge))
+			from.add(edge);
+	}
+	
+	public void addTo(DirectedEdge edge) {
+		if(!to.contains(edge))
+			to.add(edge);
+	}
+	
+	public LinkedList<DirectedEdge> from() {
+		return from;
+	}
+	
+	public LinkedList<DirectedEdge> to() {
+		return to;
 	}
 	
 	

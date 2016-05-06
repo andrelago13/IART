@@ -199,10 +199,14 @@ public class RoadGraph {
 						len, way.getSpeedMax(), way.getOneway(),way.getType(),
 						way.getName(),travel_time_weight,way.getId());
 				edges.add(tempEdge);
+				
+				firstNode.addFrom(tempEdge);
+				nextNode.addTo(tempEdge);
 
 				if(!nodes.contains(firstNode)){
 					nodes.add(firstNode);							
 				}
+				
 				firstNode = nextNode;
 			}
 
@@ -341,9 +345,98 @@ public class RoadGraph {
 	}
 
 	public ArrayList<DirectedEdge> shortestPathDijkstra(GraphNode src, GraphNode dst) {
-		edges.get(0).getWeight();
+		// TODO Dijkstra
 		
-		// TODO
+		/*
+			Foreach node set distance[node] = HIGH
+			SettledNodes = empty
+			UnSettledNodes = empty
+		 */	
+		for(GraphNode n : nodes) {
+			n.distance = Double.MAX_VALUE;
+			n.selected = false;
+		}
+		LinkedList<GraphNode> settledNodes = new LinkedList<GraphNode>();
+		LinkedList<GraphNode> unsettledNodes = new LinkedList<GraphNode>();
+		
+		/*
+			Add sourceNode to UnSettledNodes
+			distance[sourceNode]= 0
+		 */
+		unsettledNodes.add(src);
+		src.distance = 0;
+		
+		/*
+			while (UnSettledNodes is not empty) {
+  				evaluationNode = getNodeWithLowestDistance(UnSettledNodes)
+  				remove evaluationNode from UnSettledNodes 
+    			add evaluationNode to SettledNodes
+    			evaluatedNeighbors(evaluationNode)
+			}
+		 */
+		while(!unsettledNodes.isEmpty()) {
+			GraphNode evaluationNode = getNodeWithLowestDistance(unsettledNodes);
+			evaluationNode.selected = true;
+			if(evaluationNode == dst) {
+				System.out.println(evaluationNode.distance);
+				return null;
+			}
+			unsettledNodes.remove(evaluationNode);
+			settledNodes.add(evaluationNode);
+			unsettledNodes = evaluatedNeighbors(evaluationNode, unsettledNodes, settledNodes);
+		}
+		
 		return null;
 	}
+		
+	private static GraphNode getNodeWithLowestDistance(LinkedList<GraphNode> nodes) {
+		GraphNode result = null;
+		double minDist = Double.MAX_VALUE;
+
+		/*
+			getNodeWithLowestDistance(UnSettledNodes){
+  			find the node with the lowest distance in UnSettledNodes and return it 
+		 */
+		for(GraphNode n : nodes) {
+			if(n.distance < minDist) {
+				result = n;
+				minDist = n.distance;
+			}
+		}
+		return result;
+	}
+	
+	private static LinkedList<GraphNode> evaluatedNeighbors(GraphNode evaluationNode, LinkedList<GraphNode> unsettledNodes, LinkedList<GraphNode> settledNodes) {
+		// TODO
+		/*
+		evaluatedNeighbors(evaluationNode){
+		  Foreach destinationNode which can be reached via an edge from evaluationNode AND which is not in SettledNodes {
+		    edgeDistance = getDistance(edge(evaluationNode, destinationNode))
+		    newDistance = distance[evaluationNode] + edgeDistance
+		    if (distance[destinationNode]  > newDistance) {
+		      distance[destinationNode]  = newDistance 
+		      add destinationNode to UnSettledNodes
+		    }
+		  }
+		} 
+		*/
+		
+		LinkedList<DirectedEdge> outgoing = evaluationNode.from();
+		for(DirectedEdge outgoingEdge : outgoing) {
+			GraphNode dest = outgoingEdge.to();
+			if(settledNodes.contains(dest))
+				continue;
+			
+			double newDistance = evaluationNode.distance + outgoingEdge.getLength();
+			if(dest.distance > newDistance) {
+				dest.distance = newDistance;
+				unsettledNodes.add(dest);
+			}
+		}
+		
+		return unsettledNodes;
+	}
+
+	
+	
 }

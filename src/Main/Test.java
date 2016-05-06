@@ -43,6 +43,8 @@ import graph.GraphNode;
 import graph.RoadGraph;
 
 public class Test {
+	
+	private GraphNode src = null;
 
 	public Test() throws Exception {
 		System.out.println("Run started at"+ LocalDateTime.now() );
@@ -130,8 +132,8 @@ public class Test {
         // Transformer maps the vertex number to a vertex property
         Transformer<GraphNode,Paint> vertexColor = new Transformer<GraphNode,Paint>() {
             public Paint transform(GraphNode i) {
-                if(i.getId() == 1) return Color.GREEN;
-                return Color.RED;
+                if(i.selected) return Color.YELLOW;
+                return Color.GRAY;
             }
         };
         Transformer<GraphNode,Shape> vertexSize = new Transformer<GraphNode,Shape>(){
@@ -160,10 +162,25 @@ public class Test {
 			@Override
 			public void graphPressed(GraphNode arg0, MouseEvent arg1) {
 				// TODO Auto-generated method stub
-				System.out.println(arg0.getId());
-				System.out.println(arg0.getLat());
-				System.out.println(arg0.getLon());
-				System.out.println();
+				/*System.out.println(arg0.from().size());
+				System.out.println(arg0.to().size());
+				
+				if(arg0.from().size() > 0) {
+					System.out.println(arg0.getLat());
+					System.out.println("[ " + arg0.from().get(0).from().getLat() + " , " + arg0.from().get(0).to().getLat() + " ]");
+				}
+				
+				System.out.println();*/
+				
+				if(src == null) {
+					System.out.println("pressed first");
+					src = arg0;
+				} else {
+					System.out.println("calculating");
+					roadgraph.shortestPathDijkstra(src, arg0);
+					
+					src = null;
+				}
 			}
 
 			@Override
