@@ -18,17 +18,20 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
+import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.GraphMouseListener;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 import graph.Dijkstra;
 import graph.DirectedEdge;
 import graph.GraphNode;
 import graph.RoadGraph;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import org.apache.commons.collections15.Transformer;
 import org.xmlpull.v1.XmlPullParserException;
@@ -36,7 +39,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import parsing.OSMParser;
 
 @SuppressWarnings("serial")
-public class GraphFrame extends JFrame {
+public class GraphPanel extends JPanel {
 	
 	private Graph<GraphNode, DirectedEdge> graph;
 	
@@ -52,23 +55,21 @@ public class GraphFrame extends JFrame {
     private GraphMouseListener<GraphNode> graphMouseListener;
     
     private GraphNode clickedSource = null;
+    
+    private JFrame frame;
 	
-    public GraphFrame(String filepath) throws FileNotFoundException, IOException, XmlPullParserException {
-    	this(OSMParser.parseOSM(filepath));
+    public GraphPanel(String filepath, JFrame frame) throws FileNotFoundException, IOException, XmlPullParserException {
+    	this(OSMParser.parseOSM(filepath), frame);
     }
     
-	public GraphFrame(RoadGraph rg) {
-		this(rg, "Tourist Guide");
-	}
-	
-	public GraphFrame(RoadGraph rg, String title) {
-		super(title);
+	public GraphPanel(RoadGraph rg, JFrame frame) {
+		super();
+		this.frame = frame;
 		processGraph(rg);
 		initializeVisualization();
 		processGraphPositions();
-			
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	private void processGraph(RoadGraph rg) {
@@ -124,15 +125,15 @@ public class GraphFrame extends JFrame {
 	}
 	
 	private void initializeVisualization() {
+		initializeLayout();
+		initializeVisualizationViewer();
+		
+		
 		initializeVertexColor();
 		initializeVertexSize();
 		initializeVertexPaint();
 		initializeGraphMouse();
 		initializeGraphMouseListener();
-		
-		
-		initializeLayout();
-		initializeVisualizationViewer();
 		
 		
 		vv.setGraphMouse(graphMouse);
@@ -142,8 +143,9 @@ public class GraphFrame extends JFrame {
         vv.getRenderContext().setEdgeDrawPaintTransformer(edgePaint);
         vv.addGraphMouseListener(graphMouseListener);
         
-        getContentPane().add(vv); 
-        pack();
+        this.add(vv);
+        /*getContentPane().add(vv); 
+        pack();*/
 	}
 	
 	private void initializeVertexColor() {
@@ -189,6 +191,10 @@ public class GraphFrame extends JFrame {
 	}
 	
 	private void initializeGraphMouseListener() {
+		final VisualizationViewer<GraphNode,DirectedEdge> vv_t = vv;
+		final GraphPanel this_t = this;
+		final Layout<GraphNode, DirectedEdge> l = layout;
+		
 		graphMouseListener = new GraphMouseListener<GraphNode>() {
 			@Override
 			public void graphClicked(GraphNode arg0, MouseEvent arg1) {
@@ -207,6 +213,8 @@ public class GraphFrame extends JFrame {
 					System.out.println("Path calculated [ " + LocalDateTime.now() + " ], " + edges.size() + " edges.");
 					
 					clickedSource = null;
+					vv_t.repaint();
+					
 				}
 			}
 
@@ -219,12 +227,12 @@ public class GraphFrame extends JFrame {
 
 	private void initializeLayout() {
 		layout = new StaticLayout<GraphNode, DirectedEdge>(graph);
-        layout.setSize(new Dimension(SIZE_HORIZONTAL,SIZE_VERTICAL));
+        layout.setSize(new Dimension((int) (frame.getWidth()*0.8), frame.getHeight()));
 	}
 	
 	private void initializeVisualizationViewer() {
 		vv = new VisualizationViewer<GraphNode,DirectedEdge>(layout);
-        vv.setPreferredSize(new Dimension(SIZE_HORIZONTAL,SIZE_VERTICAL));
+        vv.setPreferredSize(new Dimension((int) (frame.getWidth()*0.8), frame.getHeight()));
 	}
 
 	public void initiate() {

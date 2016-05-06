@@ -34,13 +34,13 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import graph.DirectedEdge;
 import graph.GraphNode;
 import graph.RoadGraph;
-import gui.GraphFrame;
+import gui.GraphPanel;
 
 public class Test {
 
     public static void main(String[] args) {
         try {
-			GraphFrame gf = new GraphFrame("data/porto-small.osm");
+			GraphPanel gf = new GraphPanel("data/porto-small.osm", null);
 			gf.initiate();
 		} catch (IOException | XmlPullParserException e) {
 			e.printStackTrace();
