@@ -355,6 +355,10 @@ public class RoadGraph {
 		for(GraphNode n : nodes) {
 			n.distance = Double.MAX_VALUE;
 			n.selected = false;
+			n.shortestPath = null;
+		}
+		for(DirectedEdge e : edges) {
+			e.selected = false;
 		}
 		LinkedList<GraphNode> settledNodes = new LinkedList<GraphNode>();
 		LinkedList<GraphNode> unsettledNodes = new LinkedList<GraphNode>();
@@ -374,16 +378,22 @@ public class RoadGraph {
     			evaluatedNeighbors(evaluationNode)
 			}
 		 */
+		GraphNode evaluationNode = null;
 		while(!unsettledNodes.isEmpty()) {
-			GraphNode evaluationNode = getNodeWithLowestDistance(unsettledNodes);
+			evaluationNode = getNodeWithLowestDistance(unsettledNodes);
 			evaluationNode.selected = true;
 			if(evaluationNode == dst) {
 				System.out.println(evaluationNode.distance);
-				return null;
+				break;
 			}
 			unsettledNodes.remove(evaluationNode);
 			settledNodes.add(evaluationNode);
 			unsettledNodes = evaluatedNeighbors(evaluationNode, unsettledNodes, settledNodes);
+		}
+		
+		while(evaluationNode != null && evaluationNode != src && evaluationNode.shortestPath != null) {
+			evaluationNode.shortestPath.selected = true;
+			evaluationNode = evaluationNode.shortestPath.from();
 		}
 		
 		return null;
@@ -430,6 +440,7 @@ public class RoadGraph {
 			double newDistance = evaluationNode.distance + outgoingEdge.getLength();
 			if(dest.distance > newDistance) {
 				dest.distance = newDistance;
+				dest.shortestPath = outgoingEdge;
 				unsettledNodes.add(dest);
 			}
 		}

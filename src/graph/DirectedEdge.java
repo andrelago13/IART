@@ -34,6 +34,8 @@ public class DirectedEdge implements Serializable{
     
     private float weight;
     private long way_id; 
+    
+    public Boolean selected = false;
  
     /**
      * Constructor

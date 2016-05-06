@@ -29,6 +29,7 @@ public class GraphNode implements Serializable{
 	
 	public double distance;
 	public boolean selected = false;
+	public DirectedEdge shortestPath = null;
  
 	public GraphNode() {
 		this.lon = 0.0;

@@ -145,11 +145,23 @@ public class Test {
                 //return AffineTransform.getScaleInstance(0, 0).createTransformedShape(circle);
             }
         };
-        final AbstractModalGraphMouse graphMouse = new DefaultModalGraphMouse();
+        
+        Transformer<DirectedEdge, Paint> edgePaint = new Transformer<DirectedEdge, Paint>() {
+            public Paint transform(DirectedEdge e) {
+            	if(e.selected) {
+            		return Color.YELLOW;
+            	}
+                return Color.BLACK;
+            }
+        };
+        
+        final AbstractModalGraphMouse graphMouse = new DefaultModalGraphMouse<GraphNode, DirectedEdge>();
+        
         vv.setGraphMouse(graphMouse);
         vv.getRenderContext().setVertexFillPaintTransformer(vertexColor);
         vv.getRenderContext().setVertexShapeTransformer(vertexSize);
         vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode,DirectedEdge>());
+        vv.getRenderContext().setEdgeDrawPaintTransformer(edgePaint);
         
         vv.addGraphMouseListener(new GraphMouseListener<GraphNode>() {
 
