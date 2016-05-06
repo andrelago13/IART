@@ -1,4 +1,4 @@
-package parsing;
+package graph;
 
 /**
  * @author Sandeep Sasidharan
@@ -17,6 +17,8 @@ import java.util.regex.Pattern;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
+import parsing.OsmConstants;
 
 
 public class RoadGraph {

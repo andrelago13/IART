@@ -1,4 +1,4 @@
-package parsing;
+package graph;
 
 import java.io.Serializable;
 import java.util.Set;

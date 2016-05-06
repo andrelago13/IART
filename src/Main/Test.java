@@ -26,10 +26,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import parsing.DirectedEdge;
-import parsing.GraphNode;
 import parsing.ParseOSM;
-import parsing.RoadGraph;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
@@ -39,6 +36,9 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import graph.DirectedEdge;
+import graph.GraphNode;
+import graph.RoadGraph;
 
 public class Test {
 
