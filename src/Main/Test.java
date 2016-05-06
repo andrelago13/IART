@@ -13,6 +13,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Paint;
 import java.awt.Shape;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
@@ -35,6 +36,7 @@ import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
+import edu.uci.ics.jung.visualization.control.GraphMouseListener;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import graph.DirectedEdge;
 import graph.GraphNode;
@@ -65,15 +67,15 @@ public class Test {
 		Graph<GraphNode, DirectedEdge> osm_graph = new SparseGraph<GraphNode, DirectedEdge>();
 		for(int i = 0; i < nodes.size(); ++i) {
 			GraphNode n = nodes.get(i);
-			if(n.getLat() > 41.13982 && n.getLon() < -8.59959 && n.getLon() > -8.63018)
-				osm_graph.addVertex(nodes.get(i));
+			//if(n.getLat() > 41.13982 && n.getLon() < -8.59959 && n.getLon() > -8.63018)
+			osm_graph.addVertex(nodes.get(i));
 		}
 		for(int i = 0; i < edges.size(); ++i) {
 			GraphNode from = edges.get(i).from();
 			GraphNode to = edges.get(i).to();
 			
-			if(from.getLat() > 41.13982 && from.getLon() < -8.59959 && from.getLon() > -8.63018 && to.getLat() > 41.13982 && to.getLon() < -8.59959 && to.getLon() > -8.63018)
-				osm_graph.addEdge(edges.get(i), from, to);
+			//if(from.getLat() > 41.13982 && from.getLon() < -8.59959 && from.getLon() > -8.63018 && to.getLat() > 41.13982 && to.getLon() < -8.59959 && to.getLon() > -8.63018)
+			osm_graph.addEdge(edges.get(i), from, to);
 		}
 		
         // Create a graph with Integer vertices and String edges
@@ -134,11 +136,11 @@ public class Test {
         };
         Transformer<GraphNode,Shape> vertexSize = new Transformer<GraphNode,Shape>(){
             public Shape transform(GraphNode i){
-                Ellipse2D circle = new Ellipse2D.Double(-15, -15, 30, 30);
+                Ellipse2D circle = new Ellipse2D.Double(-5, -5, 10, 10);
                 // in this case, the vertex is twice as large
-                /*if(i.getId() == 2) return AffineTransform.getScaleInstance(2, 2).createTransformedShape(circle);
-                else return circle;*/
-                return AffineTransform.getScaleInstance(0, 0).createTransformedShape(circle);
+                if(i.getId() == 2) return AffineTransform.getScaleInstance(2, 2).createTransformedShape(circle);
+                else return circle;
+                //return AffineTransform.getScaleInstance(0, 0).createTransformedShape(circle);
             }
         };
         final AbstractModalGraphMouse graphMouse = new DefaultModalGraphMouse();
@@ -146,6 +148,32 @@ public class Test {
         vv.getRenderContext().setVertexFillPaintTransformer(vertexColor);
         vv.getRenderContext().setVertexShapeTransformer(vertexSize);
         vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode,DirectedEdge>());
+        
+        vv.addGraphMouseListener(new GraphMouseListener<GraphNode>() {
+
+			@Override
+			public void graphClicked(GraphNode arg0, MouseEvent arg1) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void graphPressed(GraphNode arg0, MouseEvent arg1) {
+				// TODO Auto-generated method stub
+				System.out.println(arg0.getId());
+				System.out.println(arg0.getLat());
+				System.out.println(arg0.getLon());
+				System.out.println();
+			}
+
+			@Override
+			public void graphReleased(GraphNode arg0, MouseEvent arg1) {
+				// TODO Auto-generated method stub
+				
+			}
+
+            
+        });
 
         JFrame frame = new JFrame("Simple Graph View");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

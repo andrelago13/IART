@@ -187,7 +187,7 @@ public class RoadGraph {
 			GraphNode firstNode = getNode(allNodes,(long)way.getRefs().get(0));
 			for(int i = 1; i <= way.getRefs().size() - 1; i++){
 				GraphNode nextNode = getNode(allNodes,(long)way.getRefs().get(i));
-				double len = distanceInMilesBetweenPoints(firstNode.getLat(),firstNode.getLon(),
+				double len = getDistance(firstNode.getLat(),firstNode.getLon(),
 						nextNode.getLat(),nextNode.getLon());
 
 				if(way.getType()==null){
@@ -279,7 +279,7 @@ public class RoadGraph {
 	 * @param lon_2 longitude of second point
 	 * @return the distance in meters
 	 */
-	public double getDistance(double lat_1, double lon_1, double lat_2, double lon_2) {
+	public static double getDistance(double lat_1, double lon_1, double lat_2, double lon_2) {
 		// source: http://www.movable-type.co.uk/scripts/latlong.html
 		double dLon = lon_2 - lon_1;
 		double dLat = lat_2 - lat_1;
@@ -340,4 +340,10 @@ public class RoadGraph {
 		}
 	}
 
+	public ArrayList<DirectedEdge> shortestPathDijkstra(GraphNode src, GraphNode dst) {
+		edges.get(0).getWeight();
+		
+		// TODO
+		return null;
+	}
 }
