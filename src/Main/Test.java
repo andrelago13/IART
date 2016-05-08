@@ -160,22 +160,20 @@ private GraphNode src = null;
 
 			@Override
 			public void graphClicked(GraphNode arg0, MouseEvent arg1) {
-				// TODO Auto-generated method stub
 				
 			}
 
 			@Override
 			public void graphPressed(GraphNode arg0, MouseEvent arg1) {
-				// TODO Auto-generated method stub
-//				System.out.println(arg0.from().size());
-//				System.out.println(arg0.to().size());
-//				
-//				if(arg0.from().size() > 0) {
-//					System.out.println(arg0.getLat());
-//					System.out.println("[ " + arg0.from().get(0).from().getLat() + " , " + arg0.from().get(0).to().getLat() + " ]");
-//				}
-//				
-//				System.out.println();
+				System.out.println(arg0.from().size());
+				System.out.println(arg0.to().size());
+				
+				if(arg0.from().size() > 0) {
+					System.out.println(arg0.getLat());
+					System.out.println("[ " + arg0.from().get(0).from().getLat() + " , " + arg0.from().get(0).to().getLat() + " ]");
+				}
+				
+				System.out.println();
 				
 				if(src == null) {
 					System.out.println("pressed first");
@@ -190,7 +188,6 @@ private GraphNode src = null;
 
 			@Override
 			public void graphReleased(GraphNode arg0, MouseEvent arg1) {
-				// TODO Auto-generated method stub
 				
 			}
 

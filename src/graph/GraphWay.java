@@ -96,7 +96,6 @@ public class GraphWay {
 	}
  
 	public String getName() {
-		// TODO Auto-generated method stub
 		return name;
 	}
  

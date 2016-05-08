@@ -11,20 +11,17 @@ import java.awt.geom.Point2D;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.LinkedList;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
-import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.GraphMouseListener;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
-import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 import graph.Dijkstra;
 import graph.DirectedEdge;
 import graph.GraphNode;
@@ -42,9 +39,8 @@ import parsing.OSMParser;
 public class GraphPanel extends JPanel {
 	
 	private Graph<GraphNode, DirectedEdge> graph;
-	
-	private int SIZE_HORIZONTAL = 977;
-	private int SIZE_VERTICAL = 600;
+
+	public final static double WIDTH_PERCENTAGE = 0.8;
 	
 	private Layout<GraphNode, DirectedEdge> layout;
 	private VisualizationViewer<GraphNode,DirectedEdge> vv;
@@ -57,6 +53,8 @@ public class GraphPanel extends JPanel {
     private GraphNode clickedSource = null;
     
     private JFrame frame;
+    private int myWidth;
+    private int myHeight;
 	
     public GraphPanel(String filepath, JFrame frame) throws FileNotFoundException, IOException, XmlPullParserException {
     	this(OSMParser.parseOSM(filepath), frame);
@@ -65,11 +63,11 @@ public class GraphPanel extends JPanel {
 	public GraphPanel(RoadGraph rg, JFrame frame) {
 		super();
 		this.frame = frame;
+		this.myWidth = (int) (this.frame.getWidth()*0.8);
+		this.myHeight = this.frame.getHeight();
 		processGraph(rg);
 		initializeVisualization();
 		processGraphPositions();
-
-        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	private void processGraph(RoadGraph rg) {
@@ -122,6 +120,8 @@ public class GraphPanel extends JPanel {
 			
 			layout.setLocation(nodes.get(i), new Point2D.Double(lon,lat));
 		}
+		
+		// TODO acabar
 	}
 	
 	private void initializeVisualization() {
@@ -192,18 +192,10 @@ public class GraphPanel extends JPanel {
 	
 	private void initializeGraphMouseListener() {
 		final VisualizationViewer<GraphNode,DirectedEdge> vv_t = vv;
-		final GraphPanel this_t = this;
-		final Layout<GraphNode, DirectedEdge> l = layout;
 		
 		graphMouseListener = new GraphMouseListener<GraphNode>() {
 			@Override
-			public void graphClicked(GraphNode arg0, MouseEvent arg1) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void graphPressed(GraphNode node, MouseEvent event) {
-				// TODO Auto-generated method stub				
+			public void graphClicked(GraphNode node, MouseEvent event) {		
 				if(clickedSource == null) {
 					System.out.println("Selected source node.");
 					clickedSource = node;
@@ -219,20 +211,21 @@ public class GraphPanel extends JPanel {
 			}
 
 			@Override
-			public void graphReleased(GraphNode arg0, MouseEvent arg1) {
-				// TODO Auto-generated method stub
-			}
+			public void graphPressed(GraphNode node, MouseEvent event) {}
+
+			@Override
+			public void graphReleased(GraphNode node, MouseEvent event) {}
         };
 	}
 
 	private void initializeLayout() {
 		layout = new StaticLayout<GraphNode, DirectedEdge>(graph);
-        layout.setSize(new Dimension((int) (frame.getWidth()*0.8), frame.getHeight()));
+        layout.setSize(new Dimension(this.myWidth, this.myHeight));
 	}
 	
 	private void initializeVisualizationViewer() {
 		vv = new VisualizationViewer<GraphNode,DirectedEdge>(layout);
-        vv.setPreferredSize(new Dimension((int) (frame.getWidth()*0.8), frame.getHeight()));
+        vv.setPreferredSize(new Dimension(this.myWidth, this.myHeight));
 	}
 
 	public void initiate() {

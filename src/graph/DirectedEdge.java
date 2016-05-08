@@ -137,7 +137,6 @@ public class DirectedEdge implements Serializable{
     }
  
 	public String getName() {
-		// TODO Auto-generated method stub
 		return name;
 	}
 	public float getWalkWeight(){

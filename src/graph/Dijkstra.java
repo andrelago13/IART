@@ -8,7 +8,6 @@ import edu.uci.ics.jung.graph.Graph;
 public class Dijkstra {
 
 	public static LinkedList<DirectedEdge> shortestPath(Graph<GraphNode, DirectedEdge> graph, GraphNode src, GraphNode dst) {
-		// TODO fazer retorno
 		LinkedList<GraphNode> nodes = new LinkedList<GraphNode>(graph.getVertices());
 		LinkedList<DirectedEdge> edges = new LinkedList<DirectedEdge>(graph.getEdges());
 

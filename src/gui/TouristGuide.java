@@ -10,17 +10,11 @@ import javax.swing.JPanel;
 
 import org.xmlpull.v1.XmlPullParserException;
 
-import edu.uci.ics.jung.visualization.transform.MutableTransformer;
-
 import java.awt.BorderLayout;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.VisualizationModel;
 import javax.swing.JButton;
-import java.awt.FlowLayout;
-import javax.swing.BoxLayout;
 import javax.swing.border.LineBorder;
 
 public class TouristGuide {
@@ -74,7 +68,7 @@ public class TouristGuide {
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
 		frame.getContentPane().add(panel_1, BorderLayout.WEST);
-		panel_1.setPreferredSize(new Dimension((int) (frame.getWidth()*0.2), frame.getHeight()));
+		panel_1.setPreferredSize(new Dimension((int) (frame.getWidth()*(1 - GraphPanel.WIDTH_PERCENTAGE)), frame.getHeight()));
 		panel_1.setLayout(null);
 		
 		JButton btnNewButton = new JButton("New button");
