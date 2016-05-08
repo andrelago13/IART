@@ -86,10 +86,10 @@ public class GraphPanel extends JPanel {
 	private void processGraphPositions() {
 		LinkedList<GraphNode> nodes = new LinkedList<GraphNode>(graph.getVertices());
 		
-		double min_lat = 1000000000;
-		double max_lat = -1000000000;
-		double min_lon = 1000000000;
-		double max_lon = -1000000000; 
+		double min_lat = Double.MAX_VALUE;
+		double max_lat = -Double.MAX_VALUE;
+		double min_lon = Double.MAX_VALUE;
+		double max_lon = -Double.MAX_VALUE; 
 		
 		for(int i = 0; i < nodes.size(); ++i) {
 			double lat = nodes.get(i).getLat();
@@ -105,23 +105,16 @@ public class GraphPanel extends JPanel {
 			if(lon < min_lon)
 				min_lon = lon;
 		}
-		//-8.63018,41.13982,-8.59959,41.15259
-		min_lat = 41.13982;
-		max_lat = 41.15259;
-		min_lon = -8.63018;
-		max_lon = -8.59959;
 		
 		for(int i = 0; i < nodes.size(); ++i) {
 			double lat = nodes.get(i).getLat();
 			double lon = nodes.get(i).getLon();
 			
-			lon = 977*(lon-min_lon)/(max_lon-min_lon);
-			lat = 650 - (650*(lat-min_lat)/(max_lat-min_lat));
+			lon = myWidth*(lon-min_lon)/(max_lon-min_lon);
+			lat = myHeight - (myHeight*(lat-min_lat)/(max_lat-min_lat));
 			
 			layout.setLocation(nodes.get(i), new Point2D.Double(lon,lat));
 		}
-		
-		// TODO acabar
 	}
 	
 	private void initializeVisualization() {
