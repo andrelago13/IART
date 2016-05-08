@@ -195,7 +195,7 @@ public class GraphPanel extends JPanel {
 				} else {
 					System.out.println("Selected destination node. Calculating with Dijkstra [ " + LocalDateTime.now() + " ]");
 					LinkedList<DirectedEdge> edges = Dijkstra.shortestPath(graph, clickedSource, node);
-					System.out.println("Path calculated [ " + LocalDateTime.now() + " ], " + edges.size() + " edges.");
+					System.out.println("Path calculated [ " + LocalDateTime.now() + " ], " + edges.size() + " edges, total distance " + node.distance + "m.");
 					
 					clickedSource = null;
 					vv_t.repaint();

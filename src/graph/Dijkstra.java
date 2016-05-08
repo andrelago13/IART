@@ -1,6 +1,5 @@
 package graph;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import edu.uci.ics.jung.graph.Graph;
@@ -36,7 +35,6 @@ public class Dijkstra {
 			evaluationNode = getNodeWithLowestDistance(unsettledNodes);
 			evaluationNode.processed = true;
 			if(evaluationNode == dst) {
-				System.out.println(evaluationNode.distance);
 				break;
 			}
 			unsettledNodes.remove(evaluationNode);
