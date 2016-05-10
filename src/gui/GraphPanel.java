@@ -55,19 +55,24 @@ public class GraphPanel extends JPanel {
     private JFrame frame;
     private int myWidth;
     private int myHeight;
-	
-    public GraphPanel(String filepath, JFrame frame) throws FileNotFoundException, IOException, XmlPullParserException {
-    	this(OSMParser.parseOSM(filepath), frame);
-    }
     
-	public GraphPanel(RoadGraph rg, JFrame frame) {
+	public GraphPanel(JFrame frame) {
 		super();
 		this.frame = frame;
 		this.myWidth = (int) (this.frame.getWidth()*0.8);
 		this.myHeight = this.frame.getHeight();
-		processGraph(rg);
+		this.graph = new SparseGraph<GraphNode, DirectedEdge>();
 		initializeVisualization();
-		processGraphPositions();
+	}
+	
+	public void init(String filepath) throws FileNotFoundException, IOException, XmlPullParserException {
+		init(OSMParser.parseOSM(filepath));
+	}
+	
+	public void init(RoadGraph rg) {
+		processGraph(rg);
+		initializeVisualizationGraph();
+		processGraphPositions();		
 	}
 	
 	private void processGraph(RoadGraph rg) {
@@ -137,8 +142,30 @@ public class GraphPanel extends JPanel {
         vv.addGraphMouseListener(graphMouseListener);
         
         this.add(vv);
-        /*getContentPane().add(vv); 
-        pack();*/
+	}
+	
+	private void initializeVisualizationGraph() {
+		this.remove(vv);
+		
+		initializeLayout();
+		initializeVisualizationViewer();
+		
+		
+		initializeVertexColor();
+		initializeVertexSize();
+		initializeVertexPaint();
+		initializeGraphMouse();
+		initializeGraphMouseListener();
+		
+		
+		vv.setGraphMouse(graphMouse);
+        vv.getRenderContext().setVertexFillPaintTransformer(vertexColor);
+        vv.getRenderContext().setVertexShapeTransformer(vertexSize);
+        vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode,DirectedEdge>());
+        vv.getRenderContext().setEdgeDrawPaintTransformer(edgePaint);
+        vv.addGraphMouseListener(graphMouseListener);
+        
+        this.add(vv);
 	}
 	
 	private void initializeVertexColor() {
@@ -219,6 +246,7 @@ public class GraphPanel extends JPanel {
 	private void initializeVisualizationViewer() {
 		vv = new VisualizationViewer<GraphNode,DirectedEdge>(layout);
         vv.setPreferredSize(new Dimension(this.myWidth, this.myHeight));
+        vv.setSize(new Dimension(this.myWidth, this.myHeight));
 	}
 
 	public void initiate() {

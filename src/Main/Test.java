@@ -39,12 +39,7 @@ import gui.GraphPanel;
 public class Test {
 
     public static void main(String[] args) {
-        try {
-			GraphPanel gf = new GraphPanel("data/porto-small.osm", null);
-			gf.initiate();
-		} catch (IOException | XmlPullParserException e) {
-			e.printStackTrace();
-		}
+    	
     }
 
 	

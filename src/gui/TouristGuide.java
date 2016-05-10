@@ -6,6 +6,7 @@ import java.awt.EventQueue;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -16,6 +17,9 @@ import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.border.LineBorder;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class TouristGuide {
 
@@ -62,7 +66,7 @@ public class TouristGuide {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		frame.setSize(screenSize);
 		
-		GraphPanel panel = new GraphPanel("data/porto-small.osm", frame);
+		GraphPanel panel = new GraphPanel(frame);
 		frame.getContentPane().add(panel);
 		
 		JPanel panel_1 = new JPanel();
@@ -71,8 +75,32 @@ public class TouristGuide {
 		panel_1.setPreferredSize(new Dimension((int) (frame.getWidth()*(1 - GraphPanel.WIDTH_PERCENTAGE)), frame.getHeight()));
 		panel_1.setLayout(null);
 		
-		JButton btnNewButton = new JButton("New button");
-		btnNewButton.setBounds(145, 11, 89, 23);
-		panel_1.add(btnNewButton);
+		JButton btnPortoSmall = new JButton("Porto (Small)");
+		btnPortoSmall.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					panel.init("data/porto-small.osm");
+				} catch (IOException | XmlPullParserException e1) {
+					JOptionPane.showMessageDialog(null, "Unable to load map \"data/porto-small.osm\"", "Error", JOptionPane.ERROR_MESSAGE);
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnPortoSmall.setBounds(92, 11, 198, 23);
+		panel_1.add(btnPortoSmall);
+		
+		JButton btnPortoLarge = new JButton("Porto (Large)");
+		btnPortoLarge.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					panel.init("data/porto-large.osm");
+				} catch (IOException | XmlPullParserException e) {
+					JOptionPane.showMessageDialog(null, "Unable to load map \"data/porto-large.osm\"", "Error", JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				}
+			}
+		});
+		btnPortoLarge.setBounds(92, 43, 198, 23);
+		panel_1.add(btnPortoLarge);
 	}
 }
