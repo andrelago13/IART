@@ -8,7 +8,9 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -65,8 +67,8 @@ public class GraphPanel extends JPanel {
 		initializeVisualization();
 	}
 	
-	public void init(String filepath) throws FileNotFoundException, IOException, XmlPullParserException {
-		init(OSMParser.parseOSM(filepath));
+	public void init(String filepath, ProgressListener pl) throws FileNotFoundException, IOException, XmlPullParserException {
+		init(OSMParser.parseOSM(filepath, pl));
 	}
 	
 	public void init(RoadGraph rg) {
@@ -129,7 +131,7 @@ public class GraphPanel extends JPanel {
 		
 		initializeVertexColor();
 		initializeVertexSize();
-		initializeVertexPaint();
+		initializeEdgePaint();
 		initializeGraphMouse();
 		initializeGraphMouseListener();
 		
@@ -153,7 +155,7 @@ public class GraphPanel extends JPanel {
 		
 		initializeVertexColor();
 		initializeVertexSize();
-		initializeVertexPaint();
+		initializeEdgePaint();
 		initializeGraphMouse();
 		initializeGraphMouseListener();
 		
@@ -173,6 +175,9 @@ public class GraphPanel extends JPanel {
 	        public Paint transform(GraphNode i) {
 	            if(i.partOfShortestPath) return Color.GREEN;
 	            if(i.processed) return Color.YELLOW;
+	            if(i.isMonument()) {
+	            	return Color.BLUE;
+	            }
 	            return Color.GRAY;
 	        }
 	    };
@@ -182,15 +187,18 @@ public class GraphPanel extends JPanel {
 		vertexSize = new Transformer<GraphNode,Shape>(){
 	        public Shape transform(GraphNode i){
 	            Ellipse2D circle = new Ellipse2D.Double(-5, -5, 10, 10);
-	            // in this case, the vertex is twice as large
-	            if(i.getId() == 2) return AffineTransform.getScaleInstance(2, 2).createTransformedShape(circle);
-	            else return circle;
-	            //return AffineTransform.getScaleInstance(0, 0).createTransformedShape(circle);
+	            //return AffineTransform.getScaleInstance(1, 1).createTransformedShape(circle);
+	            
+	            if(i.isMonument()) {
+	            	return AffineTransform.getScaleInstance(2.6, 2.6).createTransformedShape(circle);
+	            } else {
+	            	return AffineTransform.getScaleInstance(0, 0).createTransformedShape(circle);	
+	            }
 	        }
 	    };
 	}
 	
-	private void initializeVertexPaint() {
+	private void initializeEdgePaint() {
 		edgePaint = new Transformer<DirectedEdge, Paint>() {
 	        public Paint transform(DirectedEdge e) {
 	        	if(e.partOfShortestPath) {
@@ -216,18 +224,24 @@ public class GraphPanel extends JPanel {
 		graphMouseListener = new GraphMouseListener<GraphNode>() {
 			@Override
 			public void graphClicked(GraphNode node, MouseEvent event) {		
-				if(clickedSource == null) {
+				System.out.println("Clicked node " + node.getId());
+				/*if(clickedSource == null) {
 					System.out.println("Selected source node.");
 					clickedSource = node;
 				} else {
 					System.out.println("Selected destination node. Calculating with Dijkstra [ " + LocalDateTime.now() + " ]");
 					LinkedList<DirectedEdge> edges = Dijkstra.shortestPath(graph, clickedSource, node);
 					System.out.println("Path calculated [ " + LocalDateTime.now() + " ], " + edges.size() + " edges, total distance " + node.distance + "m.");
+					if(edges.get(edges.size() - 1).to() != node) {
+						System.out.println("Impossible path");
+					} else {
+						System.out.println("Possible path");
+					}
 					
 					clickedSource = null;
 					vv_t.repaint();
 					
-				}
+				}*/
 			}
 
 			@Override
@@ -252,4 +266,31 @@ public class GraphPanel extends JPanel {
 	public void initiate() {
 		setVisible(true);
 	}
+
+	public void parseMonuments(String filepath) {
+		// TODO
+		try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
+		    String line;
+		    while ((line = br.readLine()) != null) {
+		       long node_id = Long.parseLong(line);
+		       line = br.readLine();
+		       
+		       LinkedList<GraphNode> nodes = new LinkedList<GraphNode>(graph.getVertices());
+		       for(int i = 0; i < nodes.size(); ++i) {
+		    	   if(nodes.get(i).getId() == node_id) {
+		    		   GraphNode node = nodes.get(i);
+		    		   node.setMonument(true);
+		    		   node.setName(line);
+		    		   break;
+		    	   }
+		       }
+		    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		vv.repaint();
+	}
+	
 }

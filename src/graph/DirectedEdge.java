@@ -25,7 +25,7 @@ public class DirectedEdge implements Serializable{
 	 
 	private final GraphNode startNode;
     private final GraphNode endNode;
-    private double length;
+    private Double length;
     private final int speedMax;
     private boolean isOneway;
     private String type;

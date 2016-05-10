@@ -28,7 +28,7 @@ public class Dijkstra {
 		LinkedList<GraphNode> unsettledNodes = new LinkedList<GraphNode>();
 		
 		unsettledNodes.add(src);
-		src.distance = 0;
+		src.distance = (double) 0;
 		
 		GraphNode evaluationNode = null;
 		while(!unsettledNodes.isEmpty()) {

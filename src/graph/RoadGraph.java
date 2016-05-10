@@ -10,7 +10,10 @@ package graph;
  * Reference: https://github.com/COMSYS/FootPath
  */
 
+import gui.ProgressListener;
+
 import java.io.IOException;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -22,8 +25,12 @@ import org.xmlpull.v1.XmlPullParserException;
 import parsing.OsmConstants;
 
 
-public class RoadGraph {
+public class RoadGraph implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8271781548632244451L;
 	/*Class memebers*/
 	public LinkedList<GraphNode> nodes;
 	public LinkedList<DirectedEdge> edges;
@@ -37,8 +44,8 @@ public class RoadGraph {
 
 	}
 	
-	public boolean osmGraphParser(XmlPullParser xrp) throws XmlPullParserException, IOException {
-		return osmGraphParser(xrp, true);
+	public boolean osmGraphParser(XmlPullParser xrp, ProgressListener pl) throws XmlPullParserException, IOException {
+		return osmGraphParser(xrp, true, pl);
 	}
 	
 	/*Parser function
@@ -49,7 +56,7 @@ public class RoadGraph {
 	 * Refer OSM documentation for more details on OSM data specifications
 	 * 
 	 * */
-	public boolean osmGraphParser(XmlPullParser xrp, boolean print) throws XmlPullParserException, IOException {
+	public boolean osmGraphParser(XmlPullParser xrp, boolean print, ProgressListener pl) throws XmlPullParserException, IOException {
 		/*Initialization of temporary variables */
 		boolean ret = false;
 		boolean isOsmData = false;	
@@ -62,6 +69,10 @@ public class RoadGraph {
 
 		if(xrp == null){
 			return ret;
+		}
+		
+		if(pl != null) {
+			pl.updateProgress(10);
 		}
 
 		xrp.next();
@@ -169,6 +180,10 @@ public class RoadGraph {
 			}
 			eventType = xrp.next();
 		}
+		
+		if(pl != null) {
+			pl.updateProgress(30);
+		}
 
 		if(print) {
 			System.out.println("Starting node-edge relation extraction [ " + LocalDateTime.now() + " ]");
@@ -229,6 +244,10 @@ public class RoadGraph {
 				nodes.add(firstNode);										
 			}
 
+		}
+		
+		if(pl != null) {
+			pl.updateProgress(60);
 		}
 
 		if(print) {

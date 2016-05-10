@@ -21,18 +21,21 @@ public class GraphNode implements Serializable{
 		DESTINATION
 	}
  
-	private double lon;
-	private double lat;
+	private Double lon;
+	private Double lat;
 	private long id;
 	
 	private LinkedList<DirectedEdge> from = new LinkedList<DirectedEdge>();
 	private LinkedList<DirectedEdge> to = new LinkedList<DirectedEdge>();
 	
-	public double distance;
+	public Double distance;
 	public boolean processed = false;
 	public boolean partOfShortestPath = false;
 	public DirectedEdge shortestPath = null;
 	public PathPart pathPart = PathPart.PATH;
+	
+	private String name = "";
+	private boolean isMonument = false;
  
 	public GraphNode() {
 		this.lon = 0.0;
@@ -116,4 +119,21 @@ public class GraphNode implements Serializable{
 	    hash = (int) (hash+this.id);
 	    return hash;
 	  }
+
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public boolean isMonument() {
+		return isMonument;
+	}
+	
+	public void setMonument(boolean monument) {
+		isMonument = monument;
+	}
+	
 }
