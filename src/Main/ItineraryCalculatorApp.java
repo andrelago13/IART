@@ -280,6 +280,7 @@ public class ItineraryCalculatorApp extends JApplet {
 				longitude = d.width / 2 + longitude;
 			}
 			
+			System.out.println(longitude);
 			return new Point2D.Double(longitude,latitude);
 		}
     	
