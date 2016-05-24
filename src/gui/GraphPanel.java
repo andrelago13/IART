@@ -204,7 +204,8 @@ public class GraphPanel extends JPanel {
                     at.concatenate(vat);
                     at.concatenate(lat);
                     g2d.setTransform(at);
-                    g.drawImage(icon.getImage(), 125, 155, icon.getIconWidth(),icon.getIconHeight(),vv);
+                    double scale = 1.53;
+                    g.drawImage(icon.getImage(), 145, 173, (int)(icon.getIconWidth()*scale),(int)(icon.getIconHeight()*(scale+0.05)),vv);
                     g2d.setTransform(oldXform);
                 }
                 public boolean useTransform() { return false; }
