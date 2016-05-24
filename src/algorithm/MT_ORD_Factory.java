@@ -14,7 +14,7 @@ public class MT_ORD_Factory {
 		
 		for(int i = 0; i < number_chromossomes; ++i) {
 			MT_ORD_Chromossome c = new MT_ORD_Chromossome(number_transports, number_monuments, number_days);
-			c.generate(transports_base, monuments_base);
+			c.generate(transports_base, monuments_base, number_monuments);
 			result.add(c);
 		}
 		

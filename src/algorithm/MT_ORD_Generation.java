@@ -159,9 +159,10 @@ public class MT_ORD_Generation {
 
 	public ArrayList<Double> getAdaptation(ArrayList<MT_ORD_Chromossome> chromossomes) {
 		ArrayList<Double> result = new ArrayList<Double>();
+		ArrayList<Integer> splits = chromossomes.get(0).getCrossovers();
 		
 		for(int i = 0; i < chromossomes.size(); ++i) {
-			result.add(chromossomes.get(i).adaptation(graph, hours_per_day, financial_limit, transports));
+			result.add(chromossomes.get(i).adaptation(graph, hours_per_day, financial_limit, transports, splits));
 		}
 		
 		return result;

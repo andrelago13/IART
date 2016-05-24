@@ -31,13 +31,18 @@ public class MT_ORD_Chromossome implements Cloneable {
 		String transports_base = BinaryUtils.zeroBaseForNNumbers(number_transports);
 		String monuments_base = BinaryUtils.zeroBaseForNNumbers(number_monuments);
 		
-		return generate(transports_base, monuments_base);		
+		return generate(transports_base, monuments_base, number_monuments);		
 	}
 	
-	public ArrayList<Integer> generate(String transports_base, String monuments_base) {
+	public ArrayList<Integer> generate(String transports_base, String monuments_base, int number_monuments) {
 		this.content =  "";
 		int transports_base_size = transports_base.length();
 		int monuments_base_size = monuments_base.length();
+		
+		ArrayList<Integer> monuments = new ArrayList<Integer>();
+		for(int i = 0; i < number_monuments; ++i) {
+			monuments.add(i);
+		}
 		
 		ArrayList<Integer> possible_crossovers = new ArrayList<Integer>();
 		
@@ -53,7 +58,15 @@ public class MT_ORD_Chromossome implements Cloneable {
 		// GENERATE ORDERS AND TRANSPORTS
 
 		for(int i = 0; i < this.number_monuments; ++i) {
-			int monument = r.nextInt(number_monuments);
+			int monuments_size = monuments.size();
+			int monument;
+			if(monuments_size > 1) {
+				int pos = r.nextInt(monuments_size);
+				monument = monuments.get(pos);
+				monuments.remove(pos);
+			} else {
+				monument = monuments.get(0);
+			}
 			String mon_string_temp = Integer.toBinaryString(monument);
 			content += monuments_base.substring(0, monuments_base_size - mon_string_temp.length()) + mon_string_temp;
 			possible_crossovers.add(content.length());
@@ -187,8 +200,38 @@ public class MT_ORD_Chromossome implements Cloneable {
 		return isValidContent(content, possible_crossovers, number_transports, number_monuments, number_days);
 	}
 	
-	public double adaptation(Graph<GraphNode, DirectedEdge> graph, int hours_per_day, double financial_limit, ArrayList<Transport> transports) {
+	public double adaptation(Graph<GraphNode, DirectedEdge> graph, int hours_per_day, double financial_limit, ArrayList<Transport> transports, ArrayList<Integer> split_points) {
+		ArrayList<Integer> initial_transports = new ArrayList<Integer>();
+		ArrayList<Integer> monuments = new ArrayList<Integer>();
+		ArrayList<Integer> exit_transports = new ArrayList<Integer>();
+		
+		int curr_index = 0;
+		int prev_index = 0;
+		
+		for(; curr_index < number_days; ++curr_index) {
+			String temp = content.substring(prev_index, split_points.get(curr_index));
+			initial_transports.add(Integer.parseInt(temp, 2));
+			prev_index = split_points.get(curr_index);
+		}
+		
+		for(int i = 0; i < number_monuments; ++curr_index, ++i) {
+			String temp = content.substring(prev_index, split_points.get(curr_index));
+			monuments.add(Integer.parseInt(temp, 2));
+			
+			prev_index = split_points.get(curr_index++);
+
+			if(i < number_monuments - 1) {
+				temp = content.substring(prev_index, split_points.get(curr_index));
+				exit_transports.add(Integer.parseInt(temp, 2));
+
+				prev_index = split_points.get(curr_index);				
+			}
+		}
+		String temp = content.substring(prev_index, content.length());
+		exit_transports.add(Integer.parseInt(temp, 2));
+		
 		// FIXME completar com grafo
+		
 		return 1;
 	}
 }
