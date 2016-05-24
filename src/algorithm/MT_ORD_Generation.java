@@ -3,24 +3,29 @@ package algorithm;
 import java.util.ArrayList;
 import java.util.Random;
 
+import edu.uci.ics.jung.graph.Graph;
+import graph.DirectedEdge;
+import graph.GraphNode;
 import utils.ArrayUtils;
 import utils.BinaryUtils;
 
 public class MT_ORD_Generation {
 	
-	private double crossover_probability;
 	private double mutation_probability;
 	private ArrayList<MT_ORD_Chromossome> chromossomes;
+	
+	private Graph<GraphNode, DirectedEdge> graph;
+	private int hours_per_day;
+	private double financial_limit;
+	private ArrayList<Transport> transports;
 
-	public MT_ORD_Generation(double crossover_prob, double mutation_prob, int size, int number_transports, int number_monuments, int number_days) {
-		this.crossover_probability = crossover_prob;
+	public MT_ORD_Generation(double mutation_prob, int size, int number_transports, int number_monuments, int number_days) {
 		this.mutation_probability = mutation_prob;
 		
 		chromossomes = MT_ORD_Factory.generateChromossomes(size, number_transports, number_monuments, number_days);
 	}
 	
-	public MT_ORD_Generation(double crossover_prob, double mutation_prob, ArrayList<MT_ORD_Chromossome> chromossomes) {
-		this.crossover_probability = crossover_prob;
+	public MT_ORD_Generation(double mutation_prob, ArrayList<MT_ORD_Chromossome> chromossomes) {
 		this.mutation_probability = mutation_prob;
 		this.chromossomes = chromossomes;
 	}
@@ -46,7 +51,7 @@ public class MT_ORD_Generation {
 		return chromossomes.get(0).getNumDays();
 	}
 	
-	public static ArrayList<MT_ORD_Chromossome> evolveChromossomes(Random rand, ArrayList<MT_ORD_Chromossome> chromossomes, double crossover_probability) {
+	public ArrayList<MT_ORD_Chromossome> evolveChromossomes(Random rand) {
 		int num_chromossomes = chromossomes.size();
 		
 		ArrayList<Double> adaptation = getAdaptation(chromossomes);
@@ -87,7 +92,7 @@ public class MT_ORD_Generation {
 		
 		for(int i = 0; i < num_chromossomes; ++i) {
 			double cross = rand.nextDouble();
-			if(cross <= crossover_probability) {
+			if(cross <= adaptation.get(i)) {
 				if(first_cross_index == -1) {
 					first_cross_index = i;
 				} else {
@@ -105,11 +110,7 @@ public class MT_ORD_Generation {
 		return selected_chromossomes;
 	}
 	
-	private ArrayList<MT_ORD_Chromossome> evolveChromossomes(Random rand) {
-		return evolveChromossomes(rand, chromossomes, crossover_probability);
-	}
-	
-	public static ArrayList<MT_ORD_Chromossome> mutateChromossomes(Random rand, ArrayList<MT_ORD_Chromossome> chromossomes, double mutation_probability) {
+	public static ArrayList<MT_ORD_Chromossome> mutateChromossomes(Random rand, double mutation_probability, ArrayList<MT_ORD_Chromossome> chromossomes) {
 		ArrayList<MT_ORD_Chromossome> result = ArrayUtils.clone(chromossomes);
 		int c_size = result.size();
 		
@@ -129,16 +130,17 @@ public class MT_ORD_Generation {
 		return result;
 	}
 	
-	private ArrayList<MT_ORD_Chromossome> mutateChromossomes(Random rand, ArrayList<MT_ORD_Chromossome> chromossomes) {
-		return mutateChromossomes(rand, chromossomes, mutation_probability);
-	}
-	
-	public MT_ORD_Generation evolve() {
+	public MT_ORD_Generation evolve(Graph<GraphNode, DirectedEdge> graph, int hours_per_day, double financial_limit, ArrayList<Transport> transports) {
+		this.graph = graph;
+		this.hours_per_day = hours_per_day;
+		this.financial_limit = financial_limit;
+		this.transports = transports;
+		
 		Random rand = new Random();
 		ArrayList<MT_ORD_Chromossome> evolved_chromossomes = evolveChromossomes(rand);
-		evolved_chromossomes = mutateChromossomes(rand, evolved_chromossomes);
+		evolved_chromossomes = mutateChromossomes(rand, mutation_probability, evolved_chromossomes);
 		
-		return new MT_ORD_Generation(crossover_probability, mutation_probability, evolved_chromossomes);
+		return new MT_ORD_Generation(mutation_probability, evolved_chromossomes);
 	}
 
 	public String toString() {
@@ -155,11 +157,11 @@ public class MT_ORD_Generation {
 		return result;
 	}
 
-	public static ArrayList<Double> getAdaptation(ArrayList<MT_ORD_Chromossome> chromossomes) {
+	public ArrayList<Double> getAdaptation(ArrayList<MT_ORD_Chromossome> chromossomes) {
 		ArrayList<Double> result = new ArrayList<Double>();
 		
 		for(int i = 0; i < chromossomes.size(); ++i) {
-			result.add(chromossomes.get(i).adaptation());
+			result.add(chromossomes.get(i).adaptation(graph, hours_per_day, financial_limit, transports));
 		}
 		
 		return result;

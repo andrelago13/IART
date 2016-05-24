@@ -43,6 +43,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import algorithm.MT_ORD_Chromossome;
 import algorithm.MT_ORD_Factory;
+import algorithm.MT_ORD_Generation;
 import algorithm.Transport;
 import parsing.OSMParser;
 
@@ -66,15 +67,6 @@ public class GraphPanel extends JPanel {
     private JFrame frame;
     private int myWidth;
     private int myHeight;
-    
-	public GraphPanel(JFrame frame) {
-		super();
-		this.frame = frame;
-		this.myWidth = (int) (this.frame.getWidth()*0.8);
-		this.myHeight = this.frame.getHeight();
-		this.graph = new SparseGraph<GraphNode, DirectedEdge>();
-		initializeVisualization();
-	}
 	
 	private String background_path = null;
 	private int backgound_x_pos;
@@ -84,6 +76,15 @@ public class GraphPanel extends JPanel {
 	
 	private ArrayList<Monument> monuments = null;
 	private ArrayList<Transport> transports = null;
+    
+	public GraphPanel(JFrame frame) {
+		super();
+		this.frame = frame;
+		this.myWidth = (int) (this.frame.getWidth()*0.8);
+		this.myHeight = this.frame.getHeight();
+		this.graph = new SparseGraph<GraphNode, DirectedEdge>();
+		initializeVisualization();
+	}
 	
 	public void init(String filepath, ProgressListener pl, String background_path, int x_pos, int y_pos, double x_scale, double y_scale) throws FileNotFoundException, IOException, XmlPullParserException {
 		init(OSMParser.parseOSM(filepath, pl), background_path, x_pos, y_pos, x_scale, y_scale);
@@ -380,8 +381,20 @@ public class GraphPanel extends JPanel {
 		vv.repaint();
 	}
 
-	public void solve(int number_days, int hours_per_day, double financial_limit, ArrayList<Transport> transports, int population_size, int number_generations) {
+	public void solve(int number_days, int hours_per_day, double financial_limit, ArrayList<Transport> transports, int population_size, int number_generations, double mutation_prob) {
 		ArrayList<MT_ORD_Chromossome> population = MT_ORD_Factory.generateChromossomes(population_size, transports.size(), this.monuments.size(), number_days);
+		MT_ORD_Generation gen = new MT_ORD_Generation(mutation_prob, population);
+		
+		ArrayList<MT_ORD_Generation> generations = new ArrayList<MT_ORD_Generation>();
+		generations.add(gen);
+		
+		for(int i = 1; i < number_generations; ++i) {
+			gen = gen.evolve(this.graph, hours_per_day, financial_limit, transports);
+			generations.add(gen);
+		}
+		
+		System.out.println("done");
+		// TODO display result and show stats
 	}
 	
 	

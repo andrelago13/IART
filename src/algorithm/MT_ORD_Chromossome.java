@@ -3,6 +3,9 @@ package algorithm;
 import java.util.ArrayList;
 import java.util.Random;
 
+import edu.uci.ics.jung.graph.Graph;
+import graph.DirectedEdge;
+import graph.GraphNode;
 import utils.BinaryUtils;
 
 public class MT_ORD_Chromossome implements Cloneable {
@@ -184,7 +187,7 @@ public class MT_ORD_Chromossome implements Cloneable {
 		return isValidContent(content, possible_crossovers, number_transports, number_monuments, number_days);
 	}
 	
-	public double adaptation() {
+	public double adaptation(Graph<GraphNode, DirectedEdge> graph, int hours_per_day, double financial_limit, ArrayList<Transport> transports) {
 		// FIXME completar com grafo
 		return 1;
 	}
