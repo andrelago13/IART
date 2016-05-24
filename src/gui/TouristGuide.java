@@ -96,7 +96,7 @@ public class TouristGuide implements ProgressListener {
 		btnPortoLarge = new JButton("Porto (Large)");
 		btnPortoLarge.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				loadMap("data/porto-large.osm", "data/porto-monuments.txt", "data/porto-large.png", 145, 173, 1.53, 1.58);
+				loadMap("data/porto-large.osm", "data/porto-monuments.txt", "data/porto-large.png", 74, 113, 0.8, 1.02);
 			}
 		});
 		btnPortoLarge.setBounds(10, 45, 179, 23);
