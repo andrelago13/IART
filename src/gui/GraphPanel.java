@@ -198,7 +198,7 @@ public class GraphPanel extends JPanel {
         }
         final ImageIcon icon = mapIcon;
 
-        System.out.println("Imageicon loaded!");
+        System.out.println("map loaded!");
 
         if(icon != null) {
             vv.addPreRenderPaintable(new VisualizationViewer.Paintable(){
