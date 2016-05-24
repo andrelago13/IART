@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
@@ -30,6 +31,7 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import graph.Dijkstra;
 import graph.DirectedEdge;
 import graph.GraphNode;
+import graph.Monument;
 import graph.RoadGraph;
 
 import javax.swing.ImageIcon;
@@ -76,6 +78,8 @@ public class GraphPanel extends JPanel {
 	private int backgound_y_pos;
 	private double backgound_x_scale;
 	private double backgound_y_scale;
+	
+	private ArrayList<Monument> monuments = null;
 	
 	public void init(String filepath, ProgressListener pl, String background_path, int x_pos, int y_pos, double x_scale, double y_scale) throws FileNotFoundException, IOException, XmlPullParserException {
 		init(OSMParser.parseOSM(filepath, pl), background_path, x_pos, y_pos, x_scale, y_scale);
@@ -325,22 +329,24 @@ public class GraphPanel extends JPanel {
 	}
 
 	public void parseMonuments(String filepath) {
-		// TODO
+		this.monuments = new ArrayList<Monument>();
 		try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
 		    String line;
 		    while ((line = br.readLine()) != null) {
-		       long node_id = Long.parseLong(line);
-		       line = br.readLine();
-		       
-		       LinkedList<GraphNode> nodes = new LinkedList<GraphNode>(graph.getVertices());
-		       for(int i = 0; i < nodes.size(); ++i) {
-		    	   if(nodes.get(i).getId() == node_id) {
-		    		   GraphNode node = nodes.get(i);
-		    		   node.setMonument(true);
-		    		   node.setName(line);
-		    		   break;
-		    	   }
-		       }
+		    	long node_id = Long.parseLong(line);
+		    	line = br.readLine();
+
+		    	LinkedList<GraphNode> nodes = new LinkedList<GraphNode>(graph.getVertices());
+		    	for(int i = 0; i < nodes.size(); ++i) {
+		    		if(nodes.get(i).getId() == node_id) {
+		    			GraphNode node = nodes.get(i);
+		    			node.setMonument(true);
+		    			node.setName(line);
+		    			Monument m = new Monument(node_id, line);
+		    			this.monuments.add(m);
+		    			break;
+		    		}
+		    	}
 		    }
 		} catch (Exception e) {
 			e.printStackTrace();
