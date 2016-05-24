@@ -41,6 +41,9 @@ import javax.swing.JPanel;
 import org.apache.commons.collections15.Transformer;
 import org.xmlpull.v1.XmlPullParserException;
 
+import algorithm.MT_ORD_Chromossome;
+import algorithm.MT_ORD_Factory;
+import algorithm.Transport;
 import parsing.OSMParser;
 
 @SuppressWarnings("serial")
@@ -80,6 +83,7 @@ public class GraphPanel extends JPanel {
 	private double backgound_y_scale;
 	
 	private ArrayList<Monument> monuments = null;
+	private ArrayList<Transport> transports = null;
 	
 	public void init(String filepath, ProgressListener pl, String background_path, int x_pos, int y_pos, double x_scale, double y_scale) throws FileNotFoundException, IOException, XmlPullParserException {
 		init(OSMParser.parseOSM(filepath, pl), background_path, x_pos, y_pos, x_scale, y_scale);
@@ -94,7 +98,27 @@ public class GraphPanel extends JPanel {
 				
 		processGraph(rg);
 		initializeVisualizationGraph();
-		processGraphPositions();		
+		processGraphPositions();	
+		parseTransports("data/transports.txt");
+	}
+	
+	private void parseTransports(String filepath) {
+		transports = new ArrayList<Transport>();
+		
+		try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
+		    String line;
+		    while ((line = br.readLine()) != null) {
+		    	String name = line;
+		    	line = br.readLine();
+		    	double cost_per_10km = Double.parseDouble(line);
+		    	line = br.readLine();
+		    	double average_speed = Double.parseDouble(line);
+		    	transports.add(new Transport(name, cost_per_10km, average_speed));
+		    }
+		} catch (Exception e) {
+			e.printStackTrace();
+			transports = new ArrayList<Transport>();
+		}
 	}
 	
 	private void processGraph(RoadGraph rg) {
@@ -355,5 +379,24 @@ public class GraphPanel extends JPanel {
 		
 		vv.repaint();
 	}
+
+	public void solve(int number_days, int hours_per_day, double financial_limit, ArrayList<Transport> transports, int population_size, int number_generations) {
+		ArrayList<MT_ORD_Chromossome> population = MT_ORD_Factory.generateChromossomes(population_size, transports.size(), this.monuments.size(), number_days);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 }

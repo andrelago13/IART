@@ -1,0 +1,12 @@
+Walk
+0
+5
+Bycicle
+0.1
+18
+Bus
+1
+35
+Taxi
+3
+50
