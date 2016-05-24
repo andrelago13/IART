@@ -71,11 +71,23 @@ public class GraphPanel extends JPanel {
 		initializeVisualization();
 	}
 	
-	public void init(String filepath, ProgressListener pl) throws FileNotFoundException, IOException, XmlPullParserException {
-		init(OSMParser.parseOSM(filepath, pl));
+	private String background_path = null;
+	private int backgound_x_pos;
+	private int backgound_y_pos;
+	private double backgound_x_scale;
+	private double backgound_y_scale;
+	
+	public void init(String filepath, ProgressListener pl, String background_path, int x_pos, int y_pos, double x_scale, double y_scale) throws FileNotFoundException, IOException, XmlPullParserException {
+		init(OSMParser.parseOSM(filepath, pl), background_path, x_pos, y_pos, x_scale, y_scale);
 	}
 	
-	public void init(RoadGraph rg) {
+	public void init(RoadGraph rg, String background_path, int x_pos, int y_pos, double x_scale, double y_scale) {
+		this.background_path = background_path;
+		this.backgound_x_pos = x_pos;
+		this.backgound_y_pos = y_pos;
+		this.backgound_x_scale = x_scale;
+		this.backgound_y_scale = y_scale;
+				
 		processGraph(rg);
 		initializeVisualizationGraph();
 		processGraphPositions();		
@@ -176,8 +188,8 @@ public class GraphPanel extends JPanel {
         vv.getRenderContext().setEdgeDrawPaintTransformer(edgePaint);
         vv.addGraphMouseListener(graphMouseListener);
 
-		ImageIcon mapIcon = null;
-        String imageLocation = "data/PortoMap.PNG";
+        ImageIcon mapIcon = null;
+        String imageLocation = background_path;
         try {
             mapIcon =  new ImageIcon(imageLocation);
             System.out.println("loading....");
@@ -204,8 +216,8 @@ public class GraphPanel extends JPanel {
                     at.concatenate(vat);
                     at.concatenate(lat);
                     g2d.setTransform(at);
-                    double scale = 1.53;
-                    g.drawImage(icon.getImage(), 145, 173, (int)(icon.getIconWidth()*scale),(int)(icon.getIconHeight()*(scale+0.05)),vv);
+                    g.drawImage(icon.getImage(), backgound_x_pos, backgound_y_pos,
+                    		(int)(icon.getIconWidth()*backgound_x_scale),(int)(icon.getIconHeight()*backgound_y_scale),vv);
                     g2d.setTransform(oldXform);
                 }
                 public boolean useTransform() { return false; }

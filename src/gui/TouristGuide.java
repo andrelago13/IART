@@ -85,7 +85,8 @@ public class TouristGuide implements ProgressListener {
 		btnPortoSmall = new JButton("Porto (Small)");
 		btnPortoSmall.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				loadMap("data/porto-small.osm", "data/porto-monuments.txt");
+				// FIXME alterar
+				loadMap("data/porto-small.osm", "data/porto-monuments.txt", "data/porto-large.png", 145, 173, 1.53, 1.58);
 			}
 		});
 		btnPortoSmall.setBounds(92, 11, 198, 23);
@@ -94,15 +95,14 @@ public class TouristGuide implements ProgressListener {
 		btnPortoLarge = new JButton("Porto (Large)");
 		btnPortoLarge.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				loadMap("data/porto-large.osm", "data/porto-monuments.txt");
+				loadMap("data/porto-large.osm", "data/porto-monuments.txt", "data/porto-large.png", 145, 173, 1.53, 1.58);
 			}
 		});
 		btnPortoLarge.setBounds(92, 43, 198, 23);
 		panel_1.add(btnPortoLarge);
 	}
 	
-	private void loadMap(String graphpath, String monumentspath) {
-		
+	private void loadMap(String graphpath, String monumentspath, String backgroundPath, int x_pos, int y_pos, double x_scale, double y_scale) {	
 		final ProgressListener pl = this;
 		
 		new Thread( new Runnable() {
@@ -110,7 +110,7 @@ public class TouristGuide implements ProgressListener {
 		    public void run() {
 		    	try {
 					initProgressBar();
-					panel.init(graphpath, pl);
+					panel.init(graphpath, pl, backgroundPath, x_pos, y_pos, x_scale, y_scale);
 					updateProgress(90);
 					if(monumentspath != null)
 						panel.parseMonuments(monumentspath);
