@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.event.MouseEvent;
@@ -19,6 +21,7 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
+import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
@@ -29,6 +32,7 @@ import graph.DirectedEdge;
 import graph.GraphNode;
 import graph.RoadGraph;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -128,6 +132,9 @@ public class GraphPanel extends JPanel {
 		initializeLayout();
 		initializeVisualizationViewer();
 		
+
+
+		
 		
 		initializeVertexColor();
 		initializeVertexSize();
@@ -135,6 +142,7 @@ public class GraphPanel extends JPanel {
 		initializeGraphMouse();
 		initializeGraphMouseListener();
 		
+
 		
 		vv.setGraphMouse(graphMouse);
         vv.getRenderContext().setVertexFillPaintTransformer(vertexColor);
@@ -159,6 +167,7 @@ public class GraphPanel extends JPanel {
 		initializeGraphMouse();
 		initializeGraphMouseListener();
 		
+
 		
 		vv.setGraphMouse(graphMouse);
         vv.getRenderContext().setVertexFillPaintTransformer(vertexColor);
@@ -166,6 +175,41 @@ public class GraphPanel extends JPanel {
         vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode,DirectedEdge>());
         vv.getRenderContext().setEdgeDrawPaintTransformer(edgePaint);
         vv.addGraphMouseListener(graphMouseListener);
+
+		ImageIcon mapIcon = null;
+        String imageLocation = "data/PortoMap.PNG";
+        try {
+            mapIcon =  new ImageIcon(imageLocation);
+            System.out.println("loading....");
+        } catch(Exception ex) {
+            System.err.println("Can't load \""+imageLocation+"\"");
+        }
+        final ImageIcon icon = mapIcon;
+
+        System.out.println("Imageicon loaded!");
+
+        if(icon != null) {
+            vv.addPreRenderPaintable(new VisualizationViewer.Paintable(){
+                public void paint(Graphics g) {
+                	Graphics2D g2d = (Graphics2D)g;
+                	AffineTransform oldXform = g2d.getTransform();
+
+                    AffineTransform lat = 
+                    	vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getTransform();
+
+                    AffineTransform vat = 
+                    	vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getTransform();
+                    AffineTransform at = new AffineTransform();
+                    at.concatenate(g2d.getTransform());
+                    at.concatenate(vat);
+                    at.concatenate(lat);
+                    g2d.setTransform(at);
+                    g.drawImage(icon.getImage(), 125, 155, icon.getIconWidth(),icon.getIconHeight(),vv);
+                    g2d.setTransform(oldXform);
+                }
+                public boolean useTransform() { return false; }
+            });
+        }
         
         this.add(vv);
 	}
