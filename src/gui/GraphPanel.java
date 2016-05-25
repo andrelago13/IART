@@ -384,6 +384,9 @@ public class GraphPanel extends JPanel {
 		
 		vv.repaint();
 	}
+	public ArrayList<Monument> getMonuments(){
+		return monuments;
+	}
 
 	public void solve(int number_days, int hours_per_day, double financial_limit, int population_size, int elite, int number_generations, double mutation_prob) {
 		ArrayList<MT_ORD_Chromossome> population = MT_ORD_Factory.generateChromossomes(population_size, transports.size(), this.monuments.size(), number_days);
@@ -400,20 +403,6 @@ public class GraphPanel extends JPanel {
 		System.out.println("done");
 		// TODO display result and show stats
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 }
