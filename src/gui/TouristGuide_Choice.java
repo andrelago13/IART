@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -21,6 +22,7 @@ import javax.swing.JProgressBar;
 import javax.swing.border.LineBorder;
 
 import org.xmlpull.v1.XmlPullParserException;
+import javax.swing.JSlider;
 
 public class TouristGuide_Choice implements ProgressListener {
 	protected String frame_title = "";
@@ -38,6 +40,7 @@ public class TouristGuide_Choice implements ProgressListener {
 	private JPanel panel_1;
 	private JProgressBar progressBar = new JProgressBar();
 	private JButton btnPortoLarge;
+	private JSlider slider;
 	
 	public static void ScreenStart() {}
 
@@ -113,10 +116,11 @@ public class TouristGuide_Choice implements ProgressListener {
 	private void onMapLoaded() {
 		JComboBox<Monument> comboBox = new JComboBox<Monument>();
 		comboBox.setBounds(12, 47, 177, 20);
-		comboBox.addItem(new Monument(0, "test1", 0, null, 0));
-		comboBox.addItem(new Monument(0, "test2", 0, null, 0));
-		comboBox.addItem(new Monument(0, "test3", 0, null, 0));
-		comboBox.addItem(new Monument(0, "test4", 0, null, 0));
+		ArrayList<Monument> monuments = panel.getMonuments();
+		for(int i = 0; i < monuments.size(); ++i) {
+			comboBox.addItem(monuments.get(i));
+		}
+		
 		comboBox.addActionListener (new ActionListener () {
 		    public void actionPerformed(ActionEvent e) {
 		        System.out.println(comboBox.getSelectedItem());
@@ -124,6 +128,14 @@ public class TouristGuide_Choice implements ProgressListener {
 		});
 		panel_1.add(comboBox);
 		comboBox.setVisible(true);
+		
+		slider = new JSlider();
+		slider.setMinorTickSpacing(2);
+		slider.setMajorTickSpacing(10);
+		slider.setBounds(10, 79, 179, 26);
+		slider.setValue(0);
+		panel_1.add(slider);
+		
 		panel_1.revalidate();
 		panel_1.repaint();
 	}

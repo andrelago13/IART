@@ -7,7 +7,7 @@ public class Monument {
 	
 	private long node_id;
 	private String name;
-	public double value;
+	public double value = 0;
 	public double visit_time_hours;
 	
 	public int position;
