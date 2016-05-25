@@ -25,6 +25,7 @@ import javax.swing.JTextPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JEditorPane;
+import javax.swing.JList;
 
 public class TouristGuide implements ProgressListener {
 
@@ -87,7 +88,7 @@ public class TouristGuide implements ProgressListener {
 		panel_1.setLayout(null);
 		
 
-		btnPortoLarge = new JButton("Porto (Large)");
+		btnPortoLarge = new JButton("Run");
 		btnPortoLarge.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				loadMap("data/porto-large.osm", "data/porto-monuments.txt", "data/porto-large.png", 74, 113, 0.8, 1.02);
@@ -95,6 +96,15 @@ public class TouristGuide implements ProgressListener {
 		});
 		btnPortoLarge.setBounds(12, 13, 179, 23);
 		panel_1.add(btnPortoLarge);
+		
+		JList list = new JList();
+		list.setBounds(12, 139, 175, 150);
+		for(int i = 0; i < panel.getMonuments().size(); i++)
+		{
+			
+		}
+		
+		panel_1.add(list);
 		
 		panel_1.setVisible(true);
 
