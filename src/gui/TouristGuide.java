@@ -100,6 +100,21 @@ public class TouristGuide implements ProgressListener {
 		});
 		btnPortoLarge.setBounds(10, 45, 179, 23);
 		panel_1.add(btnPortoLarge);
+		
+		JButton btnNewButton = new JButton("New button");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				int number_days = 1;
+				int hours_per_day = 8;
+				double financial_limit = 50;
+				int population_size = 1;
+				int number_generations = 2;
+				double mutation_prob = 0.0001;
+				panel.solve(number_days, hours_per_day, financial_limit, population_size, number_generations, mutation_prob);
+			}
+		});
+		btnNewButton.setBounds(55, 170, 89, 23);
+		panel_1.add(btnNewButton);
 	}
 	
 	private void loadMap(String graphpath, String monumentspath, String backgroundPath, int x_pos, int y_pos, double x_scale, double y_scale) {	

@@ -34,7 +34,7 @@ public class Monument {
 	};
 	
 	public Monument(long id, String name, double visit_time_hours, GraphNode graphnode) {
-		this(id, name, visit_time_hours, graphnode, -1);
+		this(id, name, visit_time_hours, graphnode, 1);
 	}
 	
 	public Monument(long id, String name, double visit_time_hours, GraphNode graphnode, int value) {

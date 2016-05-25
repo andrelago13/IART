@@ -63,6 +63,7 @@ public class GraphPanel extends JPanel {
     private GraphMouseListener<GraphNode> graphMouseListener;
     
     private GraphNode clickedSource = null;
+    private GraphNode hotel_node;
     
     private JFrame frame;
     private int myWidth;
@@ -278,7 +279,7 @@ public class GraphPanel extends JPanel {
 	            if(i.isMonument()) {
 	            	return AffineTransform.getScaleInstance(2.6, 2.6).createTransformedShape(circle);
 	            } else {
-	            	return AffineTransform.getScaleInstance(0, 0).createTransformedShape(circle);	
+	            	return AffineTransform.getScaleInstance(0.3, 0.3).createTransformedShape(circle);	
 	            }
 	        }
 	    };
@@ -311,6 +312,7 @@ public class GraphPanel extends JPanel {
 			@Override
 			public void graphClicked(GraphNode node, MouseEvent event) {		
 				System.out.println("Clicked node " + node.getId());
+				hotel_node = node;
 				/*if(clickedSource == null) {
 					System.out.println("Selected source node.");
 					clickedSource = node;
@@ -391,7 +393,7 @@ public class GraphPanel extends JPanel {
 		generations.add(gen);
 		
 		for(int i = 1; i < number_generations; ++i) {
-			gen = gen.evolve(this.graph, hours_per_day, financial_limit, transports);
+			gen = gen.evolve(this.graph, hours_per_day, financial_limit, transports, this.monuments, hotel_node);
 			generations.add(gen);
 		}
 		

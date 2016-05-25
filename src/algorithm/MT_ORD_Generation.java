@@ -137,11 +137,13 @@ public class MT_ORD_Generation {
 		return result;
 	}
 	
-	public MT_ORD_Generation evolve(Graph<GraphNode, DirectedEdge> graph, int hours_per_day, double financial_limit, ArrayList<Transport> transports) {
+	public MT_ORD_Generation evolve(Graph<GraphNode, DirectedEdge> graph, int hours_per_day, double financial_limit, ArrayList<Transport> transports, ArrayList<Monument> monuments, GraphNode hotel_node) {
 		this.graph = graph;
 		this.hours_per_day = hours_per_day;
 		this.financial_limit = financial_limit;
 		this.transports = transports;
+		this.hotel_node = hotel_node;
+		this.monuments = monuments;
 		
 		Random rand = new Random();
 		ArrayList<MT_ORD_Chromossome> evolved_chromossomes = evolveChromossomes(rand);

@@ -245,7 +245,7 @@ public class MT_ORD_Chromossome implements Cloneable {
 	
 	public double adaptation(Graph<GraphNode, DirectedEdge> graph, ArrayList<Monument> monument_ids, double hours_per_day, double financial_limit, ArrayList<Transport> transports, ArrayList<Integer> split_points, GraphNode hotel_node) {
 		// TODO verificar se dados são válidos, e penalizar se não forem
-		
+		System.out.println(content);
 		ArrayList<Integer> initial_transports;
 		ArrayList<Integer> monuments;
 		ArrayList<Integer> exit_transports;
@@ -270,10 +270,17 @@ public class MT_ORD_Chromossome implements Cloneable {
 		double current_day_time = 0;
 		
 		LinkedList<GraphNode> nodes = new LinkedList<GraphNode>(graph.getVertices());
+		int number_days = initial_transports.size();
 		
 		int num_monuments = sorted.size();
 		for(int i = 0; i < num_monuments; ++i) {
+			System.out.println("iteration");
+			if(current_day >= number_days) {
+				break;
+			}
+			
 			if(current_day_time == 0) {	// first journey of the day
+				System.out.println("first journey");
 				
 				LinkedList<DirectedEdge> path = Dijkstra.shortestPath(graph, hotel_node, sorted.get(i).graphnode);
 				double dist = 0;
@@ -291,7 +298,7 @@ public class MT_ORD_Chromossome implements Cloneable {
 			} else {
 				Monument m = sorted.get(i);
 				if(i == num_monuments - 1) {	// last monument
-
+					System.out.println("last monument");
 					LinkedList<DirectedEdge> path = Dijkstra.shortestPath(graph, m.graphnode, hotel_node);
 					double dist = 0;
 					for(int j = 0; j < path.size(); ++j) {
@@ -302,20 +309,71 @@ public class MT_ORD_Chromossome implements Cloneable {
 					double travel_time = curr_transport.timeInHours(dist);
 					double monetary_cost = curr_transport.cost(dist);
 			    	
-					if(travel_time + current_day_time > hours_per_day || monetary_cost + financial_cost > financial_limit) {
+					if(travel_time + m.visit_time_hours + current_day_time > hours_per_day || monetary_cost + financial_cost > financial_limit) {
 						// TODO GIVE SLIGHT PENALTY
 					}
 			    	
-					current_day_time += travel_time;
+					current_day_time += travel_time + m.visit_time_hours;
 					financial_cost += monetary_cost;
 					value_sum += m.value;
 				} else {
-					//TODO
+					System.out.println("normal monument");
+					Monument next_m = sorted.get(i+1);
+					
+					LinkedList<DirectedEdge> path = Dijkstra.shortestPath(graph, m.graphnode, next_m.graphnode);
+					double dist = 0;
+					for(int j = 0; j < path.size(); ++j) {
+						dist += path.get(j).getWeight();
+					}
+					
+					Transport curr_transport = transports.get(m.transport);
+					double travel_time = curr_transport.timeInHours(dist);
+					double monetary_cost = curr_transport.cost(dist);
+					System.out.println("Transport " + curr_transport.name + " distance " + dist + " time " + travel_time);
+					
+					double penalty = 0;
+					
+					if(monetary_cost + financial_cost > financial_limit) {
+						// TODO give penalty
+					}
+					
+					if(current_day_time + travel_time + m.visit_time_hours > hours_per_day) {
+						path = Dijkstra.shortestPath(graph, m.graphnode, hotel_node);
+						dist = 0;
+						for(int j = 0; j < path.size(); ++j) {
+							dist += path.get(j).getWeight();
+						}
+						
+						curr_transport = transports.get(m.transport);
+						travel_time = curr_transport.timeInHours(dist);
+						monetary_cost = curr_transport.cost(dist);
+						
+						if(monetary_cost + financial_cost > financial_limit) {
+							// TODO give penalty
+						}
+						
+						if(current_day_time + travel_time + m.visit_time_hours > hours_per_day) {
+							// TODO give penalty
+						}
+						
+						financial_cost += monetary_cost;
+						current_day++;
+						current_day_time = 0;
+					} else {
+						financial_cost += monetary_cost;
+						current_day_time += travel_time + m.visit_time_hours;
+					}
+						
+					value_sum += m.value + penalty;
 				}
 			}
 		}
-				
-		// FIXME completar com grafo
+		
+		System.out.println(value_sum);
+		
+		if(value_sum < 0) {
+			value_sum = 0;
+		}
 		
 		return value_sum;
 	}

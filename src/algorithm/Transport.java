@@ -15,7 +15,7 @@ public class Transport {
 		return km*cost_per_10km/10;
 	}
 	
-	public double timeInHours(double km) {
-		return km/average_speed;
+	public double timeInHours(double m) {
+		return m/(1000*average_speed);
 	}
 }
