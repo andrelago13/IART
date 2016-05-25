@@ -359,7 +359,9 @@ public class GraphPanel extends JPanel {
 		    String line;
 		    while ((line = br.readLine()) != null) {
 		    	long node_id = Long.parseLong(line);
+		    	String name = br.readLine();
 		    	line = br.readLine();
+		    	double visit_time = Double.parseDouble(line);
 
 		    	LinkedList<GraphNode> nodes = new LinkedList<GraphNode>(graph.getVertices());
 		    	for(int i = 0; i < nodes.size(); ++i) {
@@ -367,7 +369,7 @@ public class GraphPanel extends JPanel {
 		    			GraphNode node = nodes.get(i);
 		    			node.setMonument(true);
 		    			node.setName(line);
-		    			Monument m = new Monument(node_id, line);
+		    			Monument m = new Monument(node_id, name, visit_time);
 		    			this.monuments.add(m);
 		    			break;
 		    		}

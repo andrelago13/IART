@@ -1,11 +1,16 @@
 package algorithm;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.Random;
 
 import edu.uci.ics.jung.graph.Graph;
+import graph.Dijkstra;
 import graph.DirectedEdge;
 import graph.GraphNode;
+import graph.Monument;
 import utils.BinaryUtils;
 
 public class MT_ORD_Chromossome implements Cloneable {
@@ -200,7 +205,7 @@ public class MT_ORD_Chromossome implements Cloneable {
 		return isValidContent(content, possible_crossovers, number_transports, number_monuments, number_days);
 	}
 	
-	public double adaptation(Graph<GraphNode, DirectedEdge> graph, int hours_per_day, double financial_limit, ArrayList<Transport> transports, ArrayList<Integer> split_points) {
+	private ArrayList<ArrayList<Integer> > adaptationStart(ArrayList<Integer> split_points) {
 		ArrayList<Integer> initial_transports = new ArrayList<Integer>();
 		ArrayList<Integer> monuments = new ArrayList<Integer>();
 		ArrayList<Integer> exit_transports = new ArrayList<Integer>();
@@ -229,6 +234,83 @@ public class MT_ORD_Chromossome implements Cloneable {
 		}
 		String temp = content.substring(prev_index, content.length());
 		exit_transports.add(Integer.parseInt(temp, 2));
+		
+		ArrayList<ArrayList<Integer> > result = new ArrayList<ArrayList<Integer> >();
+		result.add(initial_transports);
+		result.add(monuments);
+		result.add(exit_transports);
+		
+		return result;
+	}
+	
+	public double adaptation(Graph<GraphNode, DirectedEdge> graph, ArrayList<Monument> monument_ids, int hours_per_day, double financial_limit, ArrayList<Transport> transports, ArrayList<Integer> split_points, long hotel_id) {
+		// TODO verificar se dados são válidos, e penalizar se não forem
+		
+		ArrayList<Integer> initial_transports;
+		ArrayList<Integer> monuments;
+		ArrayList<Integer> exit_transports;
+		{
+			ArrayList<ArrayList<Integer> > ret = adaptationStart(split_points);
+			initial_transports = ret.get(0);
+			monuments = ret.get(1);
+			exit_transports = ret.get(2);
+		}
+		
+		ArrayList<Monument> sorted = new ArrayList<Monument>(monument_ids);
+		for(int i = 0; i < sorted.size(); ++i) {
+			Monument m = sorted.get(i);
+			m.position = monuments.get(i);
+			m.transport = exit_transports.get(i);
+		}
+		Collections.sort(sorted, Monument.postitionComparator);
+		
+		int current_day = 0;
+		double value_sum = 0;
+		double financial_cost = 0;
+		double current_day_time = 0;
+		
+		LinkedList<GraphNode> nodes = new LinkedList<GraphNode>(graph.getVertices());
+		
+		int num_monuments = sorted.size();
+		for(int i = 0; i < num_monuments; ++i) {
+			if(current_day_time == 0) {	// first journey of the day
+				GraphNode src = null;
+				GraphNode dst = null;
+				long src_id = hotel_id;
+				long dst_id = sorted.get(i).getNodeID();
+		    	for(int j = 0; j < nodes.size(); ++j) {
+		    		if(nodes.get(j).getId() == src_id) {
+		    			src = nodes.get(j);
+		    		} else if (nodes.get(j).getId() == dst_id) {
+		    			dst = nodes.get(j);
+		    		}
+		    		
+		    		if(src != null && dst != null)
+		    			break;
+		    	}
+				
+				LinkedList<DirectedEdge> path = Dijkstra.shortestPath(graph, src, dst);
+				double dist = 0;
+				for(int j = 0; j < path.size(); ++j) {
+					dist += path.get(j).getWeight();
+				}
+				
+				Transport curr_transport = transports.get(initial_transports.get(current_day));
+				double travel_time = curr_transport.timeInHours(dist);
+				double monetary_cost = curr_transport.cost(dist);
+				
+				financial_cost += monetary_cost;
+				current_day_time += travel_time;
+				--i;	// To stay in the same monument
+			} else {
+				Monument m = sorted.get(i);
+				if(i == num_monuments - 1) {	// last monument
+					//TODO
+				} else {
+					//TODO
+				}
+			}
+		}
 		
 		// FIXME completar com grafo
 		

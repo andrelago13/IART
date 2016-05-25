@@ -6,6 +6,7 @@ import java.util.Random;
 import edu.uci.ics.jung.graph.Graph;
 import graph.DirectedEdge;
 import graph.GraphNode;
+import graph.Monument;
 import utils.ArrayUtils;
 import utils.BinaryUtils;
 
@@ -18,11 +19,15 @@ public class MT_ORD_Generation {
 	private int hours_per_day;
 	private double financial_limit;
 	private ArrayList<Transport> transports;
+	private long hotel_id;
+	private ArrayList<Monument> monuments;
 
-	public MT_ORD_Generation(double mutation_prob, int size, int number_transports, int number_monuments, int number_days) {
+	public MT_ORD_Generation(ArrayList<Monument> monuments, double mutation_prob, int size, int number_transports, int number_days, long hotel_id) {
 		this.mutation_probability = mutation_prob;
+		this.hotel_id = hotel_id;
+		this.monuments = monuments;
 		
-		chromossomes = MT_ORD_Factory.generateChromossomes(size, number_transports, number_monuments, number_days);
+		chromossomes = MT_ORD_Factory.generateChromossomes(size, number_transports, monuments.size(), number_days);
 	}
 	
 	public MT_ORD_Generation(double mutation_prob, ArrayList<MT_ORD_Chromossome> chromossomes) {
@@ -52,6 +57,8 @@ public class MT_ORD_Generation {
 	}
 	
 	public ArrayList<MT_ORD_Chromossome> evolveChromossomes(Random rand) {
+		// TODO permitir modo elitista 
+		
 		int num_chromossomes = chromossomes.size();
 		
 		ArrayList<Double> adaptation = getAdaptation(chromossomes);
@@ -162,7 +169,7 @@ public class MT_ORD_Generation {
 		ArrayList<Integer> splits = chromossomes.get(0).getCrossovers();
 		
 		for(int i = 0; i < chromossomes.size(); ++i) {
-			result.add(chromossomes.get(i).adaptation(graph, hours_per_day, financial_limit, transports, splits));
+			result.add(chromossomes.get(i).adaptation(graph, monuments, hours_per_day, financial_limit, transports, splits, hotel_id));
 		}
 		
 		return result;

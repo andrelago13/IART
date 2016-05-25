@@ -1,19 +1,45 @@
 package graph;
 
+import java.util.Comparator;
+import java.util.Random;
+
 public class Monument {
 	
 	private long node_id;
 	private String name;
 	public double value;
+	public double visit_time_hours;
 	
-	public Monument(long id, String name) {
-		this(id, name, -1);
+	public int position;
+	public int transport;
+	
+	public static Comparator<Monument> postitionComparator = new Comparator<Monument>() {
+        @Override
+        public int compare(Monument mon1, Monument mon2) {
+        	if(mon1.position < mon2.position) {
+        		return -1;
+        	} else if (mon1.position > mon2.position) {
+        		return 1;
+        	} else {
+        		Random r = new Random();
+        		if(r.nextBoolean()) {
+        			return -1;
+        		} else {
+        			return 1;
+        		}
+        	}
+        }
+	};
+	
+	public Monument(long id, String name, double visit_time_hours) {
+		this(id, name, visit_time_hours, -1);
 	}
 	
-	public Monument(long id, String name, int value) {
+	public Monument(long id, String name, double visit_time_hours, int value) {
 		this.node_id = id;
 		this.name = name;
 		this.value = value;
+		this.visit_time_hours = visit_time_hours;
 	}
 	
 	public long getNodeID() {
@@ -31,4 +57,13 @@ public class Monument {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public double getVisitTime() {
+		return this.visit_time_hours;
+	}
+
+	public void setVisitTime(double visit_time_hours) {
+		this.visit_time_hours = visit_time_hours;
+	}
+	
 }
