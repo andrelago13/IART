@@ -245,7 +245,6 @@ public class MT_ORD_Chromossome implements Cloneable {
 	
 	public double adaptation(Graph<GraphNode, DirectedEdge> graph, ArrayList<Monument> monument_ids, double hours_per_day, double financial_limit, ArrayList<Transport> transports, ArrayList<Integer> split_points, GraphNode hotel_node) {
 		// TODO verificar se dados são válidos, e penalizar se não forem
-		System.out.println(content);
 		ArrayList<Integer> initial_transports;
 		ArrayList<Integer> monuments;
 		ArrayList<Integer> exit_transports;
