@@ -107,10 +107,11 @@ public class TouristGuide implements ProgressListener {
 				int number_days = 1;
 				int hours_per_day = 8;
 				double financial_limit = 50;
-				int population_size = 1;
+				int population_size = 40;
 				int number_generations = 2;
 				double mutation_prob = 0.0001;
-				panel.solve(number_days, hours_per_day, financial_limit, population_size, number_generations, mutation_prob);
+				int elite = 5;
+				panel.solve(number_days, hours_per_day, financial_limit, population_size, elite, number_generations, mutation_prob);
 			}
 		});
 		btnNewButton.setBounds(55, 170, 89, 23);

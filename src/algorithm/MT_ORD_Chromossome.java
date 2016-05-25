@@ -21,6 +21,20 @@ public class MT_ORD_Chromossome implements Cloneable {
 	
 	private String content;
 	
+	public double adaptation = 0;
+	public double slice = 0;
+	
+	public static Comparator<MT_ORD_Chromossome> adaptationComparator = new Comparator<MT_ORD_Chromossome>() {
+        @Override
+        public int compare(MT_ORD_Chromossome c1, MT_ORD_Chromossome c2) {
+        	if(c1.adaptation < c2.adaptation)
+        		return -1;
+        	if(c1.adaptation > c2.adaptation)
+        		return 1;
+        	return 0;
+        }
+	};
+	
 	public MT_ORD_Chromossome(int number_transports, int number_monuments, int number_days) {
 		this(number_transports, number_monuments, number_days, "");
 	}
@@ -164,7 +178,10 @@ public class MT_ORD_Chromossome implements Cloneable {
 	}
 
 	public MT_ORD_Chromossome clone() {
-		return new MT_ORD_Chromossome(number_transports, number_monuments, number_days, new String(content));
+		MT_ORD_Chromossome c = new MT_ORD_Chromossome(number_transports, number_monuments, number_days, new String(content));
+		c.adaptation = adaptation;
+		c.slice = slice;
+		return c;
 	}
 
 	public static int isValidContent(String content, ArrayList<Integer> possible_crossovers, int number_transports, int number_monuments, int number_days) {
@@ -244,7 +261,10 @@ public class MT_ORD_Chromossome implements Cloneable {
 	}
 	
 	public double adaptation(Graph<GraphNode, DirectedEdge> graph, ArrayList<Monument> monument_ids, double hours_per_day, double financial_limit, ArrayList<Transport> transports, ArrayList<Integer> split_points, GraphNode hotel_node) {
-		// TODO verificar se dados são válidos, e penalizar se não forem
+		int penalty = 0; // 1 - slight, 2 - severe
+		
+		// TODO verificar se penalizações se adequam
+		
 		ArrayList<Integer> initial_transports;
 		ArrayList<Integer> monuments;
 		ArrayList<Integer> exit_transports;
@@ -268,18 +288,15 @@ public class MT_ORD_Chromossome implements Cloneable {
 		double financial_cost = 0;
 		double current_day_time = 0;
 		
-		LinkedList<GraphNode> nodes = new LinkedList<GraphNode>(graph.getVertices());
 		int number_days = initial_transports.size();
 		
 		int num_monuments = sorted.size();
 		for(int i = 0; i < num_monuments; ++i) {
-			System.out.println("iteration");
 			if(current_day >= number_days) {
 				break;
 			}
 			
 			if(current_day_time == 0) {	// first journey of the day
-				System.out.println("first journey");
 				
 				LinkedList<DirectedEdge> path = Dijkstra.shortestPath(graph, hotel_node, sorted.get(i).graphnode);
 				double dist = 0;
@@ -297,7 +314,6 @@ public class MT_ORD_Chromossome implements Cloneable {
 			} else {
 				Monument m = sorted.get(i);
 				if(i == num_monuments - 1) {	// last monument
-					System.out.println("last monument");
 					LinkedList<DirectedEdge> path = Dijkstra.shortestPath(graph, m.graphnode, hotel_node);
 					double dist = 0;
 					for(int j = 0; j < path.size(); ++j) {
@@ -309,14 +325,14 @@ public class MT_ORD_Chromossome implements Cloneable {
 					double monetary_cost = curr_transport.cost(dist);
 			    	
 					if(travel_time + m.visit_time_hours + current_day_time > hours_per_day || monetary_cost + financial_cost > financial_limit) {
-						// TODO GIVE SLIGHT PENALTY
+						if(penalty == 0)
+							penalty = 1;
 					}
 			    	
 					current_day_time += travel_time + m.visit_time_hours;
 					financial_cost += monetary_cost;
 					value_sum += m.value;
 				} else {
-					System.out.println("normal monument");
 					Monument next_m = sorted.get(i+1);
 					
 					LinkedList<DirectedEdge> path = Dijkstra.shortestPath(graph, m.graphnode, next_m.graphnode);
@@ -328,12 +344,9 @@ public class MT_ORD_Chromossome implements Cloneable {
 					Transport curr_transport = transports.get(m.transport);
 					double travel_time = curr_transport.timeInHours(dist);
 					double monetary_cost = curr_transport.cost(dist);
-					System.out.println("Transport " + curr_transport.name + " distance " + dist + " time " + travel_time);
-					
-					double penalty = 0;
 					
 					if(monetary_cost + financial_cost > financial_limit) {
-						// TODO give penalty
+						penalty = 2;
 					}
 					
 					if(current_day_time + travel_time + m.visit_time_hours > hours_per_day) {
@@ -348,11 +361,12 @@ public class MT_ORD_Chromossome implements Cloneable {
 						monetary_cost = curr_transport.cost(dist);
 						
 						if(monetary_cost + financial_cost > financial_limit) {
-							// TODO give penalty
+							penalty = 2;
 						}
 						
 						if(current_day_time + travel_time + m.visit_time_hours > hours_per_day) {
-							// TODO give penalty
+							if(penalty == 0)
+								penalty = 1;
 						}
 						
 						financial_cost += monetary_cost;
@@ -363,17 +377,26 @@ public class MT_ORD_Chromossome implements Cloneable {
 						current_day_time += travel_time + m.visit_time_hours;
 					}
 						
-					value_sum += m.value + penalty;
+					value_sum += m.value;
 				}
 			}
 		}
 		
-		System.out.println(value_sum);
-		
 		if(value_sum < 0) {
 			value_sum = 0;
+		} else if (value_sum < 4) {
+			if(penalty != 0) {
+				value_sum = value_sum/2;
+			}
+		} else {
+			if(penalty == 1) {
+				value_sum = value_sum/2;
+			} else {
+				value_sum = Math.sqrt(value_sum);
+			}
 		}
 		
-		return value_sum;
+		adaptation = value_sum;
+		return adaptation;
 	}
 }

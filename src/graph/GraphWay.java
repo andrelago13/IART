@@ -11,16 +11,19 @@ import java.util.LinkedList;
 public class GraphWay {
 	
 	// all nodes on this path ( ref0 -&gt; ref1 -&gt; ref2  -&gt; ...)
+	@SuppressWarnings("rawtypes")
 	private LinkedList refs;
 	private long id;
     private String type;
     private String name;
-    private String other_tags;
+    @SuppressWarnings("unused")
+	private String other_tags;
     private int speedMax;
     private boolean isOneway;
     
     public boolean valid = false;
  
+	@SuppressWarnings("rawtypes")
 	public GraphWay() {
 		this.refs = new LinkedList();
 		this.id = 0;
@@ -31,6 +34,7 @@ public class GraphWay {
 	    this.other_tags = null;
 	}
  
+	@SuppressWarnings("rawtypes")
 	public GraphWay(LinkedList refs, long id,boolean isOneway,int speedMax, String type, String name) {
 		this.refs = refs;
 		this.id = id;
@@ -41,6 +45,7 @@ public class GraphWay {
  
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public LinkedList getRefs() {
 		return refs;
 	}
@@ -50,6 +55,7 @@ public class GraphWay {
 	}
 	
 	
+	@SuppressWarnings("rawtypes")
 	public void setRefs(LinkedList refs) {
 		this.refs = refs;
 	}
@@ -59,6 +65,7 @@ public class GraphWay {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public void addRef(long ref){
 		this.refs.add(new Long(ref));
 	}

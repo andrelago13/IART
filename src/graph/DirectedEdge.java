@@ -30,7 +30,8 @@ public class DirectedEdge implements Serializable{
     private boolean isOneway;
     private String type;
     private String name;
-    private String other_tags;
+    @SuppressWarnings("unused")
+	private String other_tags;
     
     private float weight;
     private long way_id; 
@@ -63,7 +64,6 @@ public class DirectedEdge implements Serializable{
         this.endNode = endNode;
         this.speedMax = -1;
         this.isOneway = isOneway;
-        this.length = length;
         this.type = null;
         this.name = name;
         this.weight = weight;

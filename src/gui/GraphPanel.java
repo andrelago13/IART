@@ -218,43 +218,45 @@ public class GraphPanel extends JPanel {
         vv.getRenderContext().setEdgeDrawPaintTransformer(edgePaint);
         vv.addGraphMouseListener(graphMouseListener);
 
-        ImageIcon mapIcon = null;
-        String imageLocation = background_path;
-        try {
-            mapIcon =  new ImageIcon(imageLocation);
-            System.out.println("loading....");
-        } catch(Exception ex) {
-            System.err.println("Can't load \""+imageLocation+"\"");
+        if(background_path != null) {
+        	ImageIcon mapIcon = null;
+            String imageLocation = background_path;
+            try {
+                mapIcon =  new ImageIcon(imageLocation);
+                System.out.println("loading....");
+            } catch(Exception ex) {
+                System.err.println("Can't load \""+imageLocation+"\"");
+            }
+            final ImageIcon icon = mapIcon;
+
+            System.out.println("map loaded!");
+
+            if(icon != null) {
+                vv.addPreRenderPaintable(new VisualizationViewer.Paintable(){
+                    public void paint(Graphics g) {
+                    	Graphics2D g2d = (Graphics2D)g;
+                    	AffineTransform oldXform = g2d.getTransform();
+
+                        AffineTransform lat = 
+                        	vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getTransform();
+
+                        AffineTransform vat = 
+                        	vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getTransform();
+                        AffineTransform at = new AffineTransform();
+                        at.concatenate(g2d.getTransform());
+                        at.concatenate(vat);
+                        at.concatenate(lat);
+                        g2d.setTransform(at);
+                        g.drawImage(icon.getImage(), backgound_x_pos, backgound_y_pos,
+                        		(int)(icon.getIconWidth()*backgound_x_scale),(int)(icon.getIconHeight()*backgound_y_scale),vv);
+                        g2d.setTransform(oldXform);
+                    }
+                    public boolean useTransform() { return false; }
+                });
+            }
+            
+            this.add(vv);	
         }
-        final ImageIcon icon = mapIcon;
-
-        System.out.println("map loaded!");
-
-        if(icon != null) {
-            vv.addPreRenderPaintable(new VisualizationViewer.Paintable(){
-                public void paint(Graphics g) {
-                	Graphics2D g2d = (Graphics2D)g;
-                	AffineTransform oldXform = g2d.getTransform();
-
-                    AffineTransform lat = 
-                    	vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getTransform();
-
-                    AffineTransform vat = 
-                    	vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getTransform();
-                    AffineTransform at = new AffineTransform();
-                    at.concatenate(g2d.getTransform());
-                    at.concatenate(vat);
-                    at.concatenate(lat);
-                    g2d.setTransform(at);
-                    g.drawImage(icon.getImage(), backgound_x_pos, backgound_y_pos,
-                    		(int)(icon.getIconWidth()*backgound_x_scale),(int)(icon.getIconHeight()*backgound_y_scale),vv);
-                    g2d.setTransform(oldXform);
-                }
-                public boolean useTransform() { return false; }
-            });
-        }
-        
-        this.add(vv);
 	}
 	
 	private void initializeVertexColor() {
@@ -306,14 +308,12 @@ public class GraphPanel extends JPanel {
 	}
 	
 	private void initializeGraphMouseListener() {
-		final VisualizationViewer<GraphNode,DirectedEdge> vv_t = vv;
-		
 		graphMouseListener = new GraphMouseListener<GraphNode>() {
 			@Override
 			public void graphClicked(GraphNode node, MouseEvent event) {		
 				System.out.println("Clicked node " + node.getId());
 				hotel_node = node;
-				/*if(clickedSource == null) {
+				if(clickedSource == null) {
 					System.out.println("Selected source node.");
 					clickedSource = node;
 				} else {
@@ -327,9 +327,9 @@ public class GraphPanel extends JPanel {
 					}
 					
 					clickedSource = null;
-					vv_t.repaint();
+					vv.repaint();
 					
-				}*/
+				}
 			}
 
 			@Override
@@ -385,7 +385,7 @@ public class GraphPanel extends JPanel {
 		vv.repaint();
 	}
 
-	public void solve(int number_days, int hours_per_day, double financial_limit, int population_size, int number_generations, double mutation_prob) {
+	public void solve(int number_days, int hours_per_day, double financial_limit, int population_size, int elite, int number_generations, double mutation_prob) {
 		ArrayList<MT_ORD_Chromossome> population = MT_ORD_Factory.generateChromossomes(population_size, transports.size(), this.monuments.size(), number_days);
 		MT_ORD_Generation gen = new MT_ORD_Generation(mutation_prob, population);
 		
@@ -393,7 +393,7 @@ public class GraphPanel extends JPanel {
 		generations.add(gen);
 		
 		for(int i = 1; i < number_generations; ++i) {
-			gen = gen.evolve(this.graph, hours_per_day, financial_limit, transports, this.monuments, hotel_node);
+			gen = gen.evolve(this.graph, hours_per_day, financial_limit, transports, this.monuments, hotel_node, elite);
 			generations.add(gen);
 		}
 		

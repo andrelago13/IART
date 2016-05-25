@@ -195,6 +195,7 @@ public class RoadGraph implements Serializable {
 			if(!way.valid) {
 				continue;
 			}
+			@SuppressWarnings("unchecked")
 			LinkedList<Long> refs = way.getRefs();
 			boolean stop = false;
 			for(Long ref : refs){							
