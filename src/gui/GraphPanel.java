@@ -262,6 +262,7 @@ public class GraphPanel extends JPanel {
 	private void initializeVertexColor() {
 		vertexColor = new Transformer<GraphNode,Paint>() {
 	        public Paint transform(GraphNode i) {
+	        	if(i == hotel_node) return Color.YELLOW;
 	            if(i.partOfShortestPath) return Color.GREEN;
 	            if(i.processed) return Color.YELLOW;
 	            if(i.isMonument()) {
@@ -278,10 +279,11 @@ public class GraphPanel extends JPanel {
 	            Ellipse2D circle = new Ellipse2D.Double(-5, -5, 10, 10);
 	            //return AffineTransform.getScaleInstance(1, 1).createTransformedShape(circle);
 	            
-	            if(i.isMonument()) {
+	            if(i == hotel_node) return AffineTransform.getScaleInstance(0.8, 0.8).createTransformedShape(circle);
+	            else if(i.isMonument()) {
 	            	return AffineTransform.getScaleInstance(2.6, 2.6).createTransformedShape(circle);
 	            } else {
-	            	return AffineTransform.getScaleInstance(0.3, 0.3).createTransformedShape(circle);	
+	            	return AffineTransform.getScaleInstance(0.4, 0.4).createTransformedShape(circle);	
 	            }
 	        }
 	    };
@@ -313,7 +315,9 @@ public class GraphPanel extends JPanel {
 			public void graphClicked(GraphNode node, MouseEvent event) {		
 				System.out.println("Clicked node " + node.getId());
 				hotel_node = node;
-				if(clickedSource == null) {
+				vv.revalidate();
+				vv.repaint();
+				/*if(clickedSource == null) {
 					System.out.println("Selected source node.");
 					clickedSource = node;
 				} else {
@@ -329,7 +333,7 @@ public class GraphPanel extends JPanel {
 					clickedSource = null;
 					vv.repaint();
 					
-				}
+				}*/
 			}
 
 			@Override
