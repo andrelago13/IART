@@ -84,7 +84,7 @@ public class TouristGuide_PortoSmall implements ProgressListener {
 		btnPortoSmall.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// FIXME alterar
-				loadMap("data/porto-small.osm", "data/porto-monuments.txt", "data/porto-large.png", 145, 173, 1.53, 1.58);
+				loadMap("data/porto-small.osm", "data/porto-monuments.txt", "data/porto-small.png", 145, 213, 1.38, 1.62);
 				//panel_2.setVisible(true);
 				//panel_1.setVisible(false);
 			}
