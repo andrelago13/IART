@@ -31,8 +31,6 @@ public class TouristGuideMenu implements ProgressListener {
 
 	private GraphPanel panel;
 	private JFrame frame;
-	private JButton btnPortoSmall;
-	private JButton btnPortoLarge;
 	private JProgressBar progressBar = new JProgressBar();
 	private JPanel panel_1;
 
@@ -80,27 +78,13 @@ public class TouristGuideMenu implements ProgressListener {
 		panel_1.setBounds(411, 573, 156, 67);
 		frame.getContentPane().add(panel_1);
 		
-		JButton btnNewButton = new JButton("Porto (Large)");
-		panel_1.add(btnNewButton);
+		JButton btnPortoLarge = new JButton("Porto (Large)");
+		panel_1.add(btnPortoLarge);
 		
 		JButton btnPortosmall = new JButton("Porto (Small)");
 		btnPortosmall.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				TouristGuide_PortoSmall tourSmall;
-				try {
-					tourSmall = new TouristGuide_PortoSmall();
-					tourSmall.Screen_Porto_Small();
-				} catch (FileNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (XmlPullParserException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
+				TouristGuide_PortoSmall.ScreenStart();
 			}
 		});
 		panel_1.add(btnPortosmall);
@@ -110,40 +94,11 @@ public class TouristGuideMenu implements ProgressListener {
 		frame.getContentPane().add(label);
 		label.setIcon(new ImageIcon("data/background.jpg"));
 		
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				TouristGuide_PortoLarge tour;
-				try {
-					tour = new TouristGuide_PortoLarge();
-					tour.Screen_Porto_Large();
-				} catch (FileNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (XmlPullParserException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
-		
-		btnPortoSmall = new JButton("Porto (Small)");
-		btnPortoSmall.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-			}
-		});
-		btnPortoSmall.setBounds(10, 11, 179, 23);
-		
-		btnPortoLarge = new JButton("Porto (Large)");
 		btnPortoLarge.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				loadMap("data/porto-large.osm", "data/porto-monuments.txt", "data/porto-large.png", 145, 173, 1.53, 1.58);
+			public void actionPerformed(ActionEvent e) {
+				TouristGuide_PortoLarge.ScreenStart();
 			}
 		});
-		btnPortoLarge.setBounds(10, 45, 179, 23);
 	}
 	
 	private void setDefaultCloseOperation(int exitOnClose) {

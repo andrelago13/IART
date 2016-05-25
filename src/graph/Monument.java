@@ -37,7 +37,7 @@ public class Monument {
 		this(id, name, visit_time_hours, graphnode, 1);
 	}
 	
-	public Monument(long id, String name, double visit_time_hours, GraphNode graphnode, int value) {
+	public Monument(long id, String name, double visit_time_hours, GraphNode graphnode, double value) {
 		this.node_id = id;
 		this.name = name;
 		this.value = value;
@@ -69,4 +69,7 @@ public class Monument {
 		this.visit_time_hours = visit_time_hours;
 	}
 	
+	public String toString() {
+		return name;
+	}
 }
