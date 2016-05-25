@@ -19,12 +19,12 @@ public class MT_ORD_Generation {
 	private int hours_per_day;
 	private double financial_limit;
 	private ArrayList<Transport> transports;
-	private long hotel_id;
+	private GraphNode hotel_node;
 	private ArrayList<Monument> monuments;
 
-	public MT_ORD_Generation(ArrayList<Monument> monuments, double mutation_prob, int size, int number_transports, int number_days, long hotel_id) {
+	public MT_ORD_Generation(ArrayList<Monument> monuments, double mutation_prob, int size, int number_transports, int number_days, GraphNode hotel_node) {
 		this.mutation_probability = mutation_prob;
-		this.hotel_id = hotel_id;
+		this.hotel_node = hotel_node;
 		this.monuments = monuments;
 		
 		chromossomes = MT_ORD_Factory.generateChromossomes(size, number_transports, monuments.size(), number_days);
@@ -169,7 +169,7 @@ public class MT_ORD_Generation {
 		ArrayList<Integer> splits = chromossomes.get(0).getCrossovers();
 		
 		for(int i = 0; i < chromossomes.size(); ++i) {
-			result.add(chromossomes.get(i).adaptation(graph, monuments, hours_per_day, financial_limit, transports, splits, hotel_id));
+			result.add(chromossomes.get(i).adaptation(graph, monuments, hours_per_day, financial_limit, transports, splits, hotel_node));
 		}
 		
 		return result;

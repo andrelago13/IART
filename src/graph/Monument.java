@@ -13,6 +13,8 @@ public class Monument {
 	public int position;
 	public int transport;
 	
+	public GraphNode graphnode;
+	
 	public static Comparator<Monument> postitionComparator = new Comparator<Monument>() {
         @Override
         public int compare(Monument mon1, Monument mon2) {
@@ -31,15 +33,16 @@ public class Monument {
         }
 	};
 	
-	public Monument(long id, String name, double visit_time_hours) {
-		this(id, name, visit_time_hours, -1);
+	public Monument(long id, String name, double visit_time_hours, GraphNode graphnode) {
+		this(id, name, visit_time_hours, graphnode, -1);
 	}
 	
-	public Monument(long id, String name, double visit_time_hours, int value) {
+	public Monument(long id, String name, double visit_time_hours, GraphNode graphnode, int value) {
 		this.node_id = id;
 		this.name = name;
 		this.value = value;
 		this.visit_time_hours = visit_time_hours;
+		this.graphnode = graphnode;
 	}
 	
 	public long getNodeID() {

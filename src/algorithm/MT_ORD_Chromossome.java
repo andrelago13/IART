@@ -243,7 +243,7 @@ public class MT_ORD_Chromossome implements Cloneable {
 		return result;
 	}
 	
-	public double adaptation(Graph<GraphNode, DirectedEdge> graph, ArrayList<Monument> monument_ids, int hours_per_day, double financial_limit, ArrayList<Transport> transports, ArrayList<Integer> split_points, long hotel_id) {
+	public double adaptation(Graph<GraphNode, DirectedEdge> graph, ArrayList<Monument> monument_ids, double hours_per_day, double financial_limit, ArrayList<Transport> transports, ArrayList<Integer> split_points, GraphNode hotel_node) {
 		// TODO verificar se dados são válidos, e penalizar se não forem
 		
 		ArrayList<Integer> initial_transports;
@@ -274,22 +274,8 @@ public class MT_ORD_Chromossome implements Cloneable {
 		int num_monuments = sorted.size();
 		for(int i = 0; i < num_monuments; ++i) {
 			if(current_day_time == 0) {	// first journey of the day
-				GraphNode src = null;
-				GraphNode dst = null;
-				long src_id = hotel_id;
-				long dst_id = sorted.get(i).getNodeID();
-		    	for(int j = 0; j < nodes.size(); ++j) {
-		    		if(nodes.get(j).getId() == src_id) {
-		    			src = nodes.get(j);
-		    		} else if (nodes.get(j).getId() == dst_id) {
-		    			dst = nodes.get(j);
-		    		}
-		    		
-		    		if(src != null && dst != null)
-		    			break;
-		    	}
 				
-				LinkedList<DirectedEdge> path = Dijkstra.shortestPath(graph, src, dst);
+				LinkedList<DirectedEdge> path = Dijkstra.shortestPath(graph, hotel_node, sorted.get(i).graphnode);
 				double dist = 0;
 				for(int j = 0; j < path.size(); ++j) {
 					dist += path.get(j).getWeight();
@@ -305,15 +291,32 @@ public class MT_ORD_Chromossome implements Cloneable {
 			} else {
 				Monument m = sorted.get(i);
 				if(i == num_monuments - 1) {	// last monument
-					//TODO
+
+					LinkedList<DirectedEdge> path = Dijkstra.shortestPath(graph, m.graphnode, hotel_node);
+					double dist = 0;
+					for(int j = 0; j < path.size(); ++j) {
+						dist += path.get(j).getWeight();
+					}
+					
+					Transport curr_transport = transports.get(m.transport);
+					double travel_time = curr_transport.timeInHours(dist);
+					double monetary_cost = curr_transport.cost(dist);
+			    	
+					if(travel_time + current_day_time > hours_per_day || monetary_cost + financial_cost > financial_limit) {
+						// TODO GIVE SLIGHT PENALTY
+					}
+			    	
+					current_day_time += travel_time;
+					financial_cost += monetary_cost;
+					value_sum += m.value;
 				} else {
 					//TODO
 				}
 			}
 		}
-		
+				
 		// FIXME completar com grafo
 		
-		return 1;
+		return value_sum;
 	}
 }

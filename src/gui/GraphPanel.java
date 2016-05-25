@@ -369,7 +369,7 @@ public class GraphPanel extends JPanel {
 		    			GraphNode node = nodes.get(i);
 		    			node.setMonument(true);
 		    			node.setName(line);
-		    			Monument m = new Monument(node_id, name, visit_time);
+		    			Monument m = new Monument(node_id, name, visit_time, node);
 		    			this.monuments.add(m);
 		    			break;
 		    		}
