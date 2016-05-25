@@ -108,7 +108,7 @@ public class TouristGuideMenu implements ProgressListener {
 		JLabel label = new JLabel("");
 		label.setBounds(0, 0, 992, 725);
 		frame.getContentPane().add(label);
-		label.setIcon(new ImageIcon("C:\\Users\\Asus\\Documents\\GitHub\\IART\\data\\background.jpg"));
+		label.setIcon(new ImageIcon("data/background.jpg"));
 		
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

@@ -80,13 +80,10 @@ public class TouristGuide_PortoSmall implements ProgressListener {
 		panel_1.setPreferredSize(new Dimension((int) (frame.getWidth()*(1 - GraphPanel.WIDTH_PERCENTAGE)), frame.getHeight()));
 		panel_1.setLayout(null);
 	
-		btnPortoSmall = new JButton("Porto (Small)");
+		btnPortoSmall = new JButton("Run");
 		btnPortoSmall.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// FIXME alterar
 				loadMap("data/porto-small.osm", "data/porto-monuments.txt", "data/porto-small.png", 145, 213, 1.38, 1.62);
-				//panel_2.setVisible(true);
-				//panel_1.setVisible(false);
 			}
 		});
 		btnPortoSmall.setBounds(10, 11, 179, 23);
@@ -111,7 +108,7 @@ public class TouristGuide_PortoSmall implements ProgressListener {
 					updateProgress(100);
 					removeProgressBar();
 				} catch (IOException | XmlPullParserException e) {
-					JOptionPane.showMessageDialog(null, "Unable to load map \"data/porto-large.osm\"", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Unable to load map \"data/porto-small.osm\"", "Error", JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				}
 		    }
