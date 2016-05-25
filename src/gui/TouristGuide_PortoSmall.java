@@ -26,23 +26,23 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JEditorPane;
 
-public class TouristGuide implements ProgressListener {
+
+public class TouristGuide_PortoSmall implements ProgressListener {
 
 	private JFrame frame;
 	
 	private GraphPanel panel;
 	private JPanel panel_1;
-	private JProgressBar progressBar = new JProgressBar();
-	private JButton btnPortoLarge;
-
+	private JProgressBar progressBar = new JProgressBar();;
+	private JButton btnPortoSmall;
 	/**
 	 * Launch the application.
 	 */
-	public static void Screen_Porto_Large() {
+	public static void Screen_Porto_Small() {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					TouristGuide window = new TouristGuide();
+					TouristGuide_PortoSmall window = new TouristGuide_PortoSmall();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -53,22 +53,16 @@ public class TouristGuide implements ProgressListener {
 
 	/**
 	 * Create the application.
-	 * @throws XmlPullParserException 
-	 * @throws IOException 
-	 * @throws FileNotFoundException 
 	 */
-	public TouristGuide() throws FileNotFoundException, IOException, XmlPullParserException {
+	public TouristGuide_PortoSmall() throws FileNotFoundException, IOException, XmlPullParserException {
 		initialize();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
-	 * @throws XmlPullParserException 
-	 * @throws IOException 
-	 * @throws FileNotFoundException 
 	 */
 	private void initialize() throws FileNotFoundException, IOException, XmlPullParserException {		
-		frame = new JFrame("Tourist Guide Porto (Large)");
+		frame = new JFrame("Tourist Guide Porto (Small)");
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
@@ -85,15 +79,18 @@ public class TouristGuide implements ProgressListener {
 		frame.getContentPane().add(panel_1, BorderLayout.WEST);
 		panel_1.setPreferredSize(new Dimension((int) (frame.getWidth()*(1 - GraphPanel.WIDTH_PERCENTAGE)), frame.getHeight()));
 		panel_1.setLayout(null);
-		
-		btnPortoLarge = new JButton("Porto (Large)");
-		btnPortoLarge.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				loadMap("data/porto-large.osm", "data/porto-monuments.txt", "data/porto-large.png", 145, 173, 1.53, 1.58);
+	
+		btnPortoSmall = new JButton("Porto (Small)");
+		btnPortoSmall.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// FIXME alterar
+				loadMap("data/porto-small.osm", "data/porto-monuments.txt", "data/porto-large.png", 145, 173, 1.53, 1.58);
+				//panel_2.setVisible(true);
+				//panel_1.setVisible(false);
 			}
 		});
-		btnPortoLarge.setBounds(12, 13, 179, 23);
-		panel_1.add(btnPortoLarge);
+		btnPortoSmall.setBounds(10, 11, 179, 23);
+		panel_1.add(btnPortoSmall);
 		
 		panel_1.setVisible(true);
 
@@ -137,7 +134,6 @@ public class TouristGuide implements ProgressListener {
 		frame.revalidate();
 	}
 
-	@Override
 	public void updateProgress(int progress) {
 		progressBar.setValue(progress);
 		frame.repaint();
