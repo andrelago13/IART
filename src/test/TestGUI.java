@@ -2,6 +2,8 @@ package test;
 
 import gui.GraphPanel;
 import gui.ProgressListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -14,12 +16,17 @@ import javax.swing.JPanel;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+import graph.Monument;
+
 import java.awt.BorderLayout;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -41,6 +48,8 @@ public class TestGUI implements ProgressListener {
 	private JProgressBar progressBar = new JProgressBar();;
 	private JButton btnPortoSmall;
 	private JSlider slider;
+	private int sliderValue;
+	private JTextField textField;
 	/**
 	 * Launch the application.
 	 */
@@ -97,14 +106,27 @@ public class TestGUI implements ProgressListener {
 		
 		slider = new JSlider();
 		slider.setMinorTickSpacing(2);
-		slider.setMajorTickSpacing(10);
-		slider.setBounds(10, 79, 179, 26);
+		slider.setMajorTickSpacing(100);
+		slider.setBounds(10, 140, 133, 42);
+		slider.setPaintLabels(true);
+		sliderValue = slider.getValue();
 		panel_1.add(slider);
+        
+        if (!slider.getValueIsAdjusting())
+            System.out.println(slider.getValue());
+	    
+		textField = new JTextField();
+		textField.setBounds(155, 142, 32, 22);
+		panel_1.add(textField);
+		textField.setColumns(10);
+		textField.setText("" + sliderValue);
 		
+		
+
 		panel_1.setVisible(true);
 
 }
-	
+
 	private void loadMap(String graphpath, String monumentspath, String backgroundPath, int x_pos, int y_pos, double x_scale, double y_scale) {	
 		final ProgressListener pl = this;
 		
@@ -119,12 +141,40 @@ public class TestGUI implements ProgressListener {
 						panel.parseMonuments(monumentspath);
 					updateProgress(100);
 					removeProgressBar();
+					onMapLoaded();
 				} catch (IOException | XmlPullParserException e) {
 					JOptionPane.showMessageDialog(null, "Unable to load map \"data/porto-small.osm\"", "Error", JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				}
 		    }
 		}).start();
+	}
+	
+	private void onMapLoaded() {
+		JComboBox<Monument> comboBox = new JComboBox<Monument>();
+		comboBox.setBounds(12, 47, 177, 20);
+		ArrayList<Monument> monuments = panel.getMonuments();
+		for(int i = 0; i < monuments.size(); ++i) {
+			comboBox.addItem(monuments.get(i));
+		}
+		
+		comboBox.addActionListener (new ActionListener () {
+		    public void actionPerformed(ActionEvent e) {
+		        System.out.println(comboBox.getSelectedItem());
+		    }
+		});
+		panel_1.add(comboBox);
+		comboBox.setVisible(true);
+		
+		slider = new JSlider();
+		slider.setMinorTickSpacing(2);
+		slider.setMajorTickSpacing(10);
+		slider.setBounds(10, 79, 179, 26);
+		slider.setValue(0);
+		panel_1.add(slider);
+		
+		panel_1.revalidate();
+		panel_1.repaint();
 	}
 	
 	private void initProgressBar() {
