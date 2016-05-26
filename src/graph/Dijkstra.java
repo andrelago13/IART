@@ -1,6 +1,7 @@
 package graph;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import edu.uci.ics.jung.graph.Graph;
@@ -28,7 +29,7 @@ public class Dijkstra {
 			e.processed = false;
 			e.partOfShortestPath = false;
 		}
-		HashMap<GraphNode, Integer> settledNodes = new HashMap<GraphNode, Integer>();
+		HashSet<GraphNode> settledNodes = new HashSet<GraphNode>();
 		LinkedList<GraphNode> unsettledNodes = new LinkedList<GraphNode>();
 		
 		unsettledNodes.add(src);
@@ -42,7 +43,7 @@ public class Dijkstra {
 				break;
 			}
 			unsettledNodes.remove(evaluationNode);
-			settledNodes.put(evaluationNode, 0);
+			settledNodes.add(evaluationNode);
 			unsettledNodes = evaluatedNeighbors(evaluationNode, unsettledNodes, settledNodes);
 		}
 		
@@ -72,12 +73,12 @@ public class Dijkstra {
 		return result;
 	}
 	
-	private static LinkedList<GraphNode> evaluatedNeighbors(GraphNode evaluationNode, LinkedList<GraphNode> unsettledNodes, HashMap<GraphNode, Integer> settledNodes) {
+	private static LinkedList<GraphNode> evaluatedNeighbors(GraphNode evaluationNode, LinkedList<GraphNode> unsettledNodes, HashSet<GraphNode> settledNodes) {
 		LinkedList<DirectedEdge> outgoing = evaluationNode.from();
 		for(DirectedEdge outgoingEdge : outgoing) {
 			outgoingEdge.processed = true;
 			GraphNode dest = outgoingEdge.to();
-			if(settledNodes.containsKey(dest))
+			if(settledNodes.contains(dest))
 				continue;
 			
 			double newDistance = evaluationNode.distance + outgoingEdge.getLength();
