@@ -39,6 +39,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JEditorPane;
 import javax.swing.JSlider;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 
 public class TestGUI implements ProgressListener {
@@ -52,7 +54,32 @@ public class TestGUI implements ProgressListener {
 	private JSlider slider;
 	private int sliderValue;
 	private JTextField textField;
-	private JComboBox<Monument> comboBox;
+	private JComboBox<Monument> comboBox;	
+	
+	private JLabel lblNrOfDays;
+	private JTextField textField_NrOfDays;
+
+	private JLabel lblMoneyLimit;
+	private JTextField textField_MoneyLimit;
+	
+	private JLabel lblHoursPerDay;
+	private JTextField textField_HoursPerDay;
+	
+	private JLabel lblAlgorithmInfo;
+	
+	private JLabel lblPopulationSize;
+	private JTextField textField_PopulationSize;
+	
+	private JLabel lblNrOfElitistic;
+	private JLabel lblChromossomes;
+	private JTextField textField_Chromossomes;
+	
+	private JLabel lblNrOfGenerations;
+	private JTextField textField_NrOfGenerations;
+	
+	private JLabel lblMutation;
+	private JTextField textField_Mutation;
+	
 	private JButton btnNewButton_1;
 	/**
 	 * Launch the application.
@@ -116,6 +143,7 @@ public class TestGUI implements ProgressListener {
 		});
 		btnNewButton.setBounds(50, 613, 97, 25);
 		panel_1.add(btnNewButton);
+		
 		
 		panel_1.setVisible(true);
 
@@ -230,6 +258,85 @@ public class TestGUI implements ProgressListener {
 				  }
 				});
 		
+		// New buttons
+		lblNrOfDays = new JLabel("Number of days");
+		lblNrOfDays.setBounds(12, 240, 97, 16);
+		panel_1.add(lblNrOfDays);
+
+		textField_NrOfDays = new JTextField();
+		textField_NrOfDays.setBounds(131, 237, 56, 23);
+		panel_1.add(textField_NrOfDays);
+
+
+		//money
+		lblMoneyLimit = new JLabel("Money Limit");
+		lblMoneyLimit.setBounds(12, 269, 97, 16);
+		panel_1.add(lblMoneyLimit);
+
+		textField_MoneyLimit = new JTextField();
+		textField_MoneyLimit.setBounds(131, 266, 56, 23);
+		panel_1.add(textField_MoneyLimit);
+
+
+		//hours per day
+		lblHoursPerDay = new JLabel("Hours per day");
+		lblHoursPerDay.setBounds(12, 298, 97, 16);
+		panel_1.add(lblHoursPerDay);
+
+		textField_HoursPerDay = new JTextField();
+		textField_HoursPerDay.setBounds(131, 295, 56, 23);
+		panel_1.add(textField_HoursPerDay);
+
+
+		//info algorithm
+		lblAlgorithmInfo = new JLabel("Algorithm info");
+		lblAlgorithmInfo.setBounds(62, 345, 85, 23);
+		panel_1.add(lblAlgorithmInfo);
+
+
+		//population size
+		lblPopulationSize = new JLabel("Population size");
+		lblPopulationSize.setBounds(10, 384, 97, 16);
+		panel_1.add(lblPopulationSize);
+
+		textField_PopulationSize = new JTextField();
+		textField_PopulationSize.setBounds(131, 379, 56, 23);
+		panel_1.add(textField_PopulationSize);
+
+
+		//Nr of elite chromossome
+		lblNrOfElitistic = new JLabel("Nr of elite");
+		lblNrOfElitistic.setBounds(10, 407, 99, 16);
+		panel_1.add(lblNrOfElitistic);
+
+		lblChromossomes = new JLabel("chromossomes");
+		lblChromossomes.setBounds(10, 422, 97, 16);
+		panel_1.add(lblChromossomes);
+
+		textField_Chromossomes = new JTextField();
+		textField_Chromossomes.setBounds(131, 410, 56, 23);
+		panel_1.add(textField_Chromossomes);
+
+
+		//Nr of generations
+		lblNrOfGenerations = new JLabel("Nr of generations");
+		lblNrOfGenerations.setBounds(10, 444, 112, 16);
+		panel_1.add(lblNrOfGenerations);
+
+		textField_NrOfGenerations = new JTextField();
+		textField_NrOfGenerations.setBounds(131, 440, 56, 23);
+		panel_1.add(textField_NrOfGenerations);
+
+
+		//Nr of mutation
+		lblMutation = new JLabel("Mutation probability");
+		lblMutation.setBounds(10, 473, 117, 16);
+		panel_1.add(lblMutation);
+
+		textField_Mutation = new JTextField();
+		textField_Mutation.setBounds(131, 470, 56, 23);
+		panel_1.add(textField_Mutation);
+				
 		panel_1.revalidate();
 		panel_1.repaint();
 	}
