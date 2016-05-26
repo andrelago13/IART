@@ -325,6 +325,9 @@ public class MT_ORD_Chromossome implements Cloneable {
 					double monetary_cost = curr_transport.cost(dist);
 			    	
 					if(travel_time + m.visit_time_hours + current_day_time > hours_per_day || monetary_cost + financial_cost > financial_limit) {
+						System.out.println("Last monument penalty");
+						System.out.println("" + travel_time + m.visit_time_hours + current_day_time + "/" + hours_per_day + " time");
+						System.out.println("" + monetary_cost + financial_cost + "/" + financial_limit + " money");
 						if(penalty == 0)
 							penalty = 1;
 					}
@@ -346,6 +349,11 @@ public class MT_ORD_Chromossome implements Cloneable {
 					double monetary_cost = curr_transport.cost(dist);
 					
 					if(monetary_cost + financial_cost > financial_limit) {
+						System.out.println("Normal monument exceeds money");
+						System.out.println(curr_transport.name);
+						System.out.println(curr_transport.cost_per_10km);
+						System.out.println(monetary_cost);
+						System.out.println("" + (monetary_cost + financial_cost) + "/" + financial_limit + " money");
 						penalty = 2;
 					}
 					
@@ -361,10 +369,14 @@ public class MT_ORD_Chromossome implements Cloneable {
 						monetary_cost = curr_transport.cost(dist);
 						
 						if(monetary_cost + financial_cost > financial_limit) {
+							System.out.println("Normal monument going to hotel exceeds money");
+							System.out.println("" + (monetary_cost + financial_cost) + "/" + financial_limit + " money");
 							penalty = 2;
 						}
 						
 						if(current_day_time + travel_time + m.visit_time_hours > hours_per_day) {
+							System.out.println("Normal monument going to hotel exceeds time");
+							System.out.println("" + (travel_time + m.visit_time_hours + current_day_time) + "/" + hours_per_day + " time");
 							if(penalty == 0)
 								penalty = 1;
 						}
@@ -382,7 +394,7 @@ public class MT_ORD_Chromossome implements Cloneable {
 			}
 		}
 		
-		if(value_sum < 0) {
+		/*if(value_sum < 0) {
 			value_sum = 0;
 		} else if (value_sum < 4) {
 			if(penalty != 0) {
@@ -394,7 +406,7 @@ public class MT_ORD_Chromossome implements Cloneable {
 			} else {
 				value_sum = Math.sqrt(value_sum);
 			}
-		}
+		}*/
 		
 		adaptation = value_sum;
 		return adaptation;

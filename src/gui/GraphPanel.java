@@ -416,6 +416,7 @@ public class GraphPanel extends JPanel {
 			gen = gen.evolve(this.graph, hours_per_day, financial_limit, transports, this.monuments, hotel_node, elite);
 			generations.add(gen);
 		}
+		gen.evolve(this.graph, hours_per_day, financial_limit, transports, this.monuments, hotel_node, elite);
 		
 		long endTime = System.currentTimeMillis();
 		long dif = endTime-startTime;

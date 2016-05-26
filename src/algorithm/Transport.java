@@ -11,8 +11,8 @@ public class Transport {
 		this.average_speed = average_speed;
 	}
 	
-	public double cost(double km) {
-		return km*cost_per_10km/10;
+	public double cost(double m) {
+		return (m/1000)*cost_per_10km/10;
 	}
 	
 	public double timeInHours(double m) {
