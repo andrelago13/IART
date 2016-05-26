@@ -130,7 +130,7 @@ public class TouristGuideMenu implements ProgressListener {
 					updateProgress(100);
 					removeProgressBar();
 				} catch (IOException | XmlPullParserException e) {
-					JOptionPane.showMessageDialog(null, "Unable to load map \"data/porto-large.osm\"", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Unable to load map", "Error", JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				}
 		    }

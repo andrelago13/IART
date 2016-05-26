@@ -11,7 +11,7 @@ public class TouristGuide_TestCase extends TouristGuide_Choice {
 		super();
 		this.frame_title = "Test Case";
 		this.graph_path = "data/teste.osm";
-		this.monuments_path = "data/test-monuments.txt";
+		this.monuments_path = "data/teste-monuments.txt";
 		this.background_path = "";
 		this.bckgrd_x_pos = 145;
 		this.bckgrd_y_pos = 213;
