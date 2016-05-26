@@ -1,5 +1,6 @@
 package gui;
 
+import graph.GraphNode;
 import graph.Monument;
 
 import java.awt.BorderLayout;
@@ -26,6 +27,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.xmlpull.v1.XmlPullParserException;
+
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -49,6 +51,8 @@ public class TouristGuide_Choice implements ProgressListener {
 	private JSlider slider;
 	private JTextField textField;
 	private JComboBox<Monument> comboBox;
+	
+	private Monument current_monument;
 	
 	public static void ScreenStart() {}
 
@@ -122,6 +126,8 @@ public class TouristGuide_Choice implements ProgressListener {
 	}
 	
 	private void onMapLoaded() {
+		panel.guide = this;
+		
 		comboBox = new JComboBox<Monument>();
 		comboBox.setBounds(12, 47, 177, 20);
 		ArrayList<Monument> monuments = panel.getMonuments();
@@ -131,13 +137,22 @@ public class TouristGuide_Choice implements ProgressListener {
 		
 		comboBox.addActionListener (new ActionListener () {
 		    public void actionPerformed(ActionEvent e) {
+		    	if(current_monument != null) {
+		    		current_monument.graphnode.processed = false;
+		    	}
 		        Monument m = (Monument) comboBox.getSelectedItem();
 				slider.setValue(m.value);
 				textField.setText("" + m.value);
+				m.graphnode.processed = true;
+				current_monument = m;
+				frame.revalidate();
+				frame.repaint();
 		    }
 		});
 		panel_1.add(comboBox);
 		comboBox.setVisible(true);
+		
+		(current_monument = (Monument) comboBox.getSelectedItem()).graphnode.processed = true;
 		
 		slider = new JSlider();
 		slider.setMinorTickSpacing(2);
@@ -202,9 +217,28 @@ public class TouristGuide_Choice implements ProgressListener {
 				  SwingUtilities.invokeLater(doHighlight);
 				  }
 				});
+
 		
-		panel_1.revalidate();
-		panel_1.repaint();
+		JButton btnSolve = new JButton("Solve");
+		btnSolve.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				solve();
+			}
+		});
+		btnSolve.setBounds(58, 539, 89, 23);
+		panel_1.add(btnSolve);
+
+		frame.revalidate();
+		frame.repaint();
+	}
+	
+	private void solve() {
+		if(current_monument != null) {
+			current_monument.graphnode.processed = false;
+			frame.revalidate();
+			frame.repaint();
+		}
+		System.out.println("hello");
 	}
 	
 	private void initProgressBar() {
@@ -228,5 +262,23 @@ public class TouristGuide_Choice implements ProgressListener {
 		progressBar.setValue(progress);
 		frame.repaint();
 		frame.revalidate();
+	}
+
+	public void clickedMonument(GraphNode node) {
+		ArrayList<Monument> monuments = panel.getMonuments();
+		for(Monument m : monuments) {
+			if(m.graphnode == node) {
+				comboBox.setSelectedItem(m);
+		    	if(current_monument != null) {
+		    		current_monument.graphnode.processed = false;
+		    	}
+				slider.setValue(m.value);
+				textField.setText("" + m.value);
+				m.graphnode.processed = true;
+				current_monument = m;
+				frame.revalidate();
+				frame.repaint();
+			}
+		}
 	}
 }

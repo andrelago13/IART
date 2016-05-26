@@ -77,6 +77,8 @@ public class GraphPanel extends JPanel {
 	
 	private ArrayList<Monument> monuments = null;
 	private ArrayList<Transport> transports = null;
+	
+	public TouristGuide_Choice guide = null;
     
 	public GraphPanel(JFrame frame) {
 		super();
@@ -312,11 +314,19 @@ public class GraphPanel extends JPanel {
 	private void initializeGraphMouseListener() {
 		graphMouseListener = new GraphMouseListener<GraphNode>() {
 			@Override
-			public void graphClicked(GraphNode node, MouseEvent event) {		
-				System.out.println("Clicked node " + node.getId());
-				hotel_node = node;
-				vv.revalidate();
-				vv.repaint();
+			public void graphClicked(GraphNode node, MouseEvent event) {
+				if(!node.isMonument()) {
+					System.out.println("Clicked node " + node.getId());
+					hotel_node = node;
+					vv.revalidate();
+					vv.repaint();
+				} else {
+					System.out.println("Clicked monument.");
+					if(guide != null) {
+						guide.clickedMonument(node);
+					}
+				}
+				
 				/*if(clickedSource == null) {
 					System.out.println("Selected source node.");
 					clickedSource = node;

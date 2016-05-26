@@ -53,6 +53,7 @@ public class TestGUI implements ProgressListener {
 	private int sliderValue;
 	private JTextField textField;
 	private JComboBox<Monument> comboBox;
+	private JButton btnNewButton_1;
 	/**
 	 * Launch the application.
 	 */
