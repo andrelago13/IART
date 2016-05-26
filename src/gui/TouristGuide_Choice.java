@@ -179,7 +179,10 @@ public class TouristGuide_Choice implements ProgressListener {
 		slider.setMinorTickSpacing(2);
 		slider.setMajorTickSpacing(10);
 		slider.setBounds(10, 79, 132, 26);
-		slider.setValue(0);
+		
+		Monument m = (Monument) comboBox.getSelectedItem();
+		slider.setValue(m.value);
+		
 		panel_1.add(slider);
 		
 		textField = new JTextField();
