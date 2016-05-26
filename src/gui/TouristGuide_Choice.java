@@ -338,13 +338,13 @@ public class TouristGuide_Choice implements ProgressListener {
 			frame.repaint();
 		}
 		
-		int number_days = 1;
-		int hours_per_day = 8;
-		double financial_limit = 50;
-		int population_size = 100;
-		int elite = 5;
-		int number_generations = 30;
-		double mutation_prob = 0.001;
+		int number_days = Integer.parseInt(textField_NrOfDays.getText());
+		int hours_per_day = Integer.parseInt(textField_HoursPerDay.getText());
+		double financial_limit = Double.parseDouble(textField_MoneyLimit.getText());
+		int population_size = Integer.parseInt(textField_PopulationSize.getText());
+		int elite = Integer.parseInt(textField_Chromossomes.getText());
+		int number_generations = Integer.parseInt(textField_NrOfGenerations.getText());;
+		double mutation_prob = Double.parseDouble(textField_Mutation.getText());
 		panel.solve(number_days, hours_per_day, financial_limit, population_size, elite, number_generations, mutation_prob);
 	}
 	
