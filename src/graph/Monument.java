@@ -7,7 +7,7 @@ public class Monument {
 	
 	private long node_id;
 	private String name;
-	public double value = 0;
+	public int value = 0;
 	public double visit_time_hours;
 	
 	public int position;
@@ -34,10 +34,10 @@ public class Monument {
 	};
 	
 	public Monument(long id, String name, double visit_time_hours, GraphNode graphnode) {
-		this(id, name, visit_time_hours, graphnode, 1);
+		this(id, name, visit_time_hours, graphnode, 0);
 	}
 	
-	public Monument(long id, String name, double visit_time_hours, GraphNode graphnode, double value) {
+	public Monument(long id, String name, double visit_time_hours, GraphNode graphnode, int value) {
 		this.node_id = id;
 		this.name = name;
 		this.value = value;
