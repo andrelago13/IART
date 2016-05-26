@@ -238,7 +238,15 @@ public class TouristGuide_Choice implements ProgressListener {
 			frame.revalidate();
 			frame.repaint();
 		}
-		System.out.println("hello");
+		
+		int number_days = 1;
+		int hours_per_day = 8;
+		double financial_limit = 50;
+		int population_size = 100;
+		int elite = 5;
+		int number_generations = 30;
+		double mutation_prob = 0.001;
+		panel.solve(number_days, hours_per_day, financial_limit, population_size, elite, number_generations, mutation_prob);
 	}
 	
 	private void initProgressBar() {
