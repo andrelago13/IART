@@ -54,8 +54,7 @@ public class TestGUI implements ProgressListener {
 	private JSlider slider;
 	private int sliderValue;
 	private JTextField textField;
-	private JComboBox<Monument> comboBox;
-	
+	private JComboBox<Monument> comboBox;	
 	
 	private JLabel lblNrOfDays;
 	private JTextField textField_NrOfDays;
@@ -81,6 +80,7 @@ public class TestGUI implements ProgressListener {
 	private JLabel lblMutation;
 	private JTextField textField_Mutation;
 	
+	private JButton btnNewButton_1;
 	/**
 	 * Launch the application.
 	 */
