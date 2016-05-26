@@ -20,9 +20,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.xmlpull.v1.XmlPullParserException;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 public class TouristGuide_Choice implements ProgressListener {
 	protected String frame_title = "";
@@ -41,6 +47,8 @@ public class TouristGuide_Choice implements ProgressListener {
 	private JProgressBar progressBar = new JProgressBar();
 	private JButton btnPortoLarge;
 	private JSlider slider;
+	private JTextField textField;
+	private JComboBox<Monument> comboBox;
 	
 	public static void ScreenStart() {}
 
@@ -114,7 +122,7 @@ public class TouristGuide_Choice implements ProgressListener {
 	}
 	
 	private void onMapLoaded() {
-		JComboBox<Monument> comboBox = new JComboBox<Monument>();
+		comboBox = new JComboBox<Monument>();
 		comboBox.setBounds(12, 47, 177, 20);
 		ArrayList<Monument> monuments = panel.getMonuments();
 		for(int i = 0; i < monuments.size(); ++i) {
@@ -123,7 +131,9 @@ public class TouristGuide_Choice implements ProgressListener {
 		
 		comboBox.addActionListener (new ActionListener () {
 		    public void actionPerformed(ActionEvent e) {
-		        System.out.println(comboBox.getSelectedItem());
+		        Monument m = (Monument) comboBox.getSelectedItem();
+				slider.setValue(m.value);
+				textField.setText("" + m.value);
 		    }
 		});
 		panel_1.add(comboBox);
@@ -132,9 +142,66 @@ public class TouristGuide_Choice implements ProgressListener {
 		slider = new JSlider();
 		slider.setMinorTickSpacing(2);
 		slider.setMajorTickSpacing(10);
-		slider.setBounds(10, 79, 179, 26);
+		slider.setBounds(10, 79, 132, 26);
 		slider.setValue(0);
 		panel_1.add(slider);
+		
+		textField = new JTextField();
+		textField.setBounds(154, 79, 32, 22);
+		panel_1.add(textField);
+		textField.setColumns(10);
+		textField.setText("" + slider.getValue());
+
+		slider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				textField.setText("" + slider.getValue());
+				Monument m = (Monument) comboBox.getSelectedItem();
+				m.value = slider.getValue();
+			}
+		});
+
+		textField.getDocument().addDocumentListener(new DocumentListener() {
+			  public void changedUpdate(DocumentEvent e) {
+				    warn();				    
+				  }
+				  public void removeUpdate(DocumentEvent e) {
+				    warn();
+				  }
+				  public void insertUpdate(DocumentEvent e) {
+				    warn();
+				  }
+
+				  public void warn() {
+					  
+					  Runnable doHighlight = new Runnable() {
+					  @Override
+					  public void run() {
+						  try {
+							  String text = textField.getText();
+							  if(text == null || text.equals("")) {
+								  textField.setText("0");
+							  } else {
+								  int value = Integer.parseInt(text);
+								  if(value < 0) {
+									  slider.setValue(0);
+									  textField.setText("0");
+								  } else if (value > 100) {
+									  slider.setValue(100);
+									  textField.setText("100");
+								  } else {
+									  slider.setValue(value);
+								  }
+							  }
+							  Monument m = (Monument) comboBox.getSelectedItem();
+							  m.value = slider.getValue();
+						  } catch (Exception e) {
+							  
+						  }
+					  }
+				  };       
+				  SwingUtilities.invokeLater(doHighlight);
+				  }
+				});
 		
 		panel_1.revalidate();
 		panel_1.repaint();

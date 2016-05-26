@@ -107,9 +107,22 @@ public class TestGUI implements ProgressListener {
 		btnPortoSmall.setBounds(10, 11, 179, 23);
 		panel_1.add(btnPortoSmall);
 		
+		JButton btnNewButton = new JButton("New button");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				solve();
+			}
+		});
+		btnNewButton.setBounds(50, 613, 97, 25);
+		panel_1.add(btnNewButton);
+		
 		panel_1.setVisible(true);
 
 }
+	
+	private void solve() {
+		
+	}
 
 	private void loadMap(String graphpath, String monumentspath, String backgroundPath, int x_pos, int y_pos, double x_scale, double y_scale) {	
 		final ProgressListener pl = this;
