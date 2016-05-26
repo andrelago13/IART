@@ -26,6 +26,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.plaf.metal.MetalSliderUI;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -194,7 +195,20 @@ public class TouristGuide_Choice implements ProgressListener {
 				m.value = slider.getValue();
 			}
 		});
+		
+		slider.setUI(new MetalSliderUI() {
+			protected void scrollDueToClickInTrack(int direction) {
+				int value = slider.getValue(); 
 
+				if (slider.getOrientation() == JSlider.HORIZONTAL) {
+					value = this.valueForXPosition(slider.getMousePosition().x);
+				} else if (slider.getOrientation() == JSlider.VERTICAL) {
+					value = this.valueForYPosition(slider.getMousePosition().y);
+				}
+				slider.setValue(value);
+			}
+		});
+		
 		textField.getDocument().addDocumentListener(new DocumentListener() {
 			  public void changedUpdate(DocumentEvent e) {
 				    warn();				    
