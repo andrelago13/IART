@@ -1,10 +1,14 @@
 package graph;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import edu.uci.ics.jung.graph.Graph;
 
 public class Dijkstra {
+	
+	private static Double min_dist = Double.MAX_VALUE;
+	private static GraphNode min_dist_node = null;
 
 	public static LinkedList<DirectedEdge> shortestPath(Graph<GraphNode, DirectedEdge> graph, GraphNode src, GraphNode dst) {
 		LinkedList<GraphNode> nodes = new LinkedList<GraphNode>(graph.getVertices());
@@ -24,7 +28,7 @@ public class Dijkstra {
 			e.processed = false;
 			e.partOfShortestPath = false;
 		}
-		LinkedList<GraphNode> settledNodes = new LinkedList<GraphNode>();
+		HashMap<GraphNode, Integer> settledNodes = new HashMap<GraphNode, Integer>();
 		LinkedList<GraphNode> unsettledNodes = new LinkedList<GraphNode>();
 		
 		unsettledNodes.add(src);
@@ -38,7 +42,7 @@ public class Dijkstra {
 				break;
 			}
 			unsettledNodes.remove(evaluationNode);
-			settledNodes.add(evaluationNode);
+			settledNodes.put(evaluationNode, 0);
 			unsettledNodes = evaluatedNeighbors(evaluationNode, unsettledNodes, settledNodes);
 		}
 		
@@ -68,12 +72,12 @@ public class Dijkstra {
 		return result;
 	}
 	
-	private static LinkedList<GraphNode> evaluatedNeighbors(GraphNode evaluationNode, LinkedList<GraphNode> unsettledNodes, LinkedList<GraphNode> settledNodes) {
+	private static LinkedList<GraphNode> evaluatedNeighbors(GraphNode evaluationNode, LinkedList<GraphNode> unsettledNodes, HashMap<GraphNode, Integer> settledNodes) {
 		LinkedList<DirectedEdge> outgoing = evaluationNode.from();
 		for(DirectedEdge outgoingEdge : outgoing) {
 			outgoingEdge.processed = true;
 			GraphNode dest = outgoingEdge.to();
-			if(settledNodes.contains(dest))
+			if(settledNodes.containsKey(dest))
 				continue;
 			
 			double newDistance = evaluationNode.distance + outgoingEdge.getLength();
@@ -81,6 +85,11 @@ public class Dijkstra {
 				dest.distance = newDistance;
 				dest.shortestPath = outgoingEdge;
 				unsettledNodes.add(dest);
+				
+				if(newDistance < min_dist) {
+					min_dist = newDistance;
+					min_dist_node = dest;
+				}
 			}
 		}
 		
