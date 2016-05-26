@@ -185,4 +185,31 @@ public class MT_ORD_Generation {
 		
 		return result;
 	}
+
+	public String getStats() {
+		double total_adaptation = 0;
+		double max_adaptation = Double.MIN_VALUE;
+		double min_adaptation = Double.MAX_VALUE;
+		int num_invalids = 0;
+		
+		for(MT_ORD_Chromossome c : chromossomes) {
+			double adaptation = c.adaptation;
+			
+			if(adaptation > max_adaptation) {
+				max_adaptation = adaptation;
+			}
+			if(adaptation < min_adaptation) {
+				min_adaptation = adaptation;
+			}
+			if(adaptation == 0) {
+				++num_invalids;
+			}
+			
+			total_adaptation += adaptation;
+		}
+
+		double average_adaptation = total_adaptation/chromossomes.size();
+		
+		return "Best adaptation: " + max_adaptation + "; Average adaptation: " + average_adaptation + "; Min adaptation: " + min_adaptation + "; Num invalids: " + num_invalids + ";";
+	}
 }

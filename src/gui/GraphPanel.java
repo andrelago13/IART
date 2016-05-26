@@ -393,6 +393,9 @@ public class GraphPanel extends JPanel {
 	}
 
 	public void solve(int number_days, int hours_per_day, double financial_limit, int population_size, int elite, int number_generations, double mutation_prob) {
+		System.out.println("Starting execution of genetic algorithms.");
+		long startTime = System.currentTimeMillis();
+		
 		ArrayList<MT_ORD_Chromossome> population = MT_ORD_Factory.generateChromossomes(population_size, transports.size(), this.monuments.size(), number_days);
 		MT_ORD_Generation gen = new MT_ORD_Generation(mutation_prob, population);
 		
@@ -404,8 +407,19 @@ public class GraphPanel extends JPanel {
 			generations.add(gen);
 		}
 		
-		System.out.println("done");
-		// TODO display result and show stats
+		long endTime = System.currentTimeMillis();
+		long dif = endTime-startTime;
+		if(dif < 1000) {
+			System.out.println("Ended execution of genetic algorithms. Took " + dif + " miliseconds.");
+		} else if (dif < 1000*60) {
+			System.out.println("Ended execution of genetic algorithms. Took " + (double)(dif/1000.0) + " seconds.");
+		} else {
+			System.out.println("Ended execution of genetic algorithms. Took " + (double)(dif/(1000.0*60)) + " minutes.");
+		}
+		
+		for(int i = 0; i < generations.size(); ++i) {
+			System.out.println("" + '\t' + "Gen#" + i + " -> " + generations.get(i).getStats());
+		}
 	}
 	
 	
