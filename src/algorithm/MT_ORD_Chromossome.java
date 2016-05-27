@@ -24,6 +24,24 @@ public class MT_ORD_Chromossome implements Cloneable {
 	public double adaptation = 0;
 	public double slice = 0;
 	
+	/*     ADAPTATION AUXILIARY VARIABLES     */
+	private Graph<GraphNode, DirectedEdge> graph;
+	private ArrayList<Monument> sorted_monuments;
+	private ArrayList<Integer> initial_transports;
+	private int current_day;
+	private double value_sum;
+	private double financial_cost;
+	private double current_day_time;
+	private double hours_per_day;
+	private double financial_limit;
+	private ArrayList<Transport> transports;
+	private GraphNode hotel_node;
+	private static enum BacktrackResult {
+		OK,
+		GOTO_HOTEL
+	}
+	/* -------------------------------------- */
+	
 	public static Comparator<MT_ORD_Chromossome> adaptationComparator = new Comparator<MT_ORD_Chromossome>() {
         @Override
         public int compare(MT_ORD_Chromossome c1, MT_ORD_Chromossome c2) {
@@ -261,6 +279,232 @@ public class MT_ORD_Chromossome implements Cloneable {
 	}
 	
 	public double adaptation(Graph<GraphNode, DirectedEdge> graph, ArrayList<Monument> monument_ids, double hours_per_day, double financial_limit, ArrayList<Transport> transports, ArrayList<Integer> split_points, GraphNode hotel_node) {
+		ArrayList<Integer> monuments;
+		ArrayList<Integer> exit_transports;
+		{
+			ArrayList<ArrayList<Integer> > ret = adaptationStart(split_points);
+			initial_transports = ret.get(0);
+			monuments = ret.get(1);
+			exit_transports = ret.get(2);
+		}
+		
+		sorted_monuments = new ArrayList<Monument>(monument_ids);
+		for(int i = 0; i < sorted_monuments.size(); ++i) {
+			Monument m = sorted_monuments.get(i);
+			m.position = monuments.get(i);
+			m.transport = exit_transports.get(i);
+		}
+		Collections.sort(sorted_monuments, Monument.postitionComparator);
+		
+		current_day = 0;
+		value_sum = 0;
+		financial_cost = 0;
+		current_day_time = 0;
+		
+		this.financial_limit = financial_limit;
+		this.graph = graph;
+		this.transports = transports;
+		this.hotel_node = hotel_node;
+		this.hours_per_day = hours_per_day;
+		
+		visit_monument_backtrack(0);
+		
+		this.graph = null;
+		this.sorted_monuments = null;
+		this.transports = null;
+		this.hotel_node = null;
+		
+		// TODO apply penalization
+		adaptation = value_sum;
+		return adaptation;
+	}
+	
+	private BacktrackResult visit_monument_backtrack(int current_monument) {
+		System.out.println("Backtrack (" + current_monument + ")");
+		if(current_day >= number_days || current_monument >= number_monuments) {
+			return BacktrackResult.OK;
+		}
+		
+		if(current_day_time == 0) {	// first journey of the day
+			return visit_monument_backtrack_firstjourney(current_monument);
+		} else {
+			if(current_monument == number_monuments - 1) {
+				return visit_monument_backtrack_lastmonument(current_monument);
+			} else {
+				return visit_monument_backtrack_normalmonument(current_monument);
+			}
+		}
+	}
+	
+	private BacktrackResult visit_monument_backtrack_firstjourney(int current_monument) {
+		System.out.println("Backtrack first journey (" + current_monument + ")");
+		// if first journey of the day, try to get to the monument
+			// if succeeds, go to it
+			// if fails, end
+		
+		LinkedList<DirectedEdge> path = Dijkstra.shortestPath(graph, hotel_node, sorted_monuments.get(current_monument).graphnode);
+		double dist = 0;
+		for(int j = 0; j < path.size(); ++j) {
+			dist += path.get(j).getWeight();
+		}
+		
+		Transport curr_transport = transports.get(initial_transports.get(current_day));
+		double travel_time = curr_transport.timeInHours(dist);
+		double cost = curr_transport.cost(dist);
+		
+		if(financial_cost + cost > financial_limit || current_day_time + travel_time > hours_per_day) {
+			return BacktrackResult.OK;
+		} else {
+			financial_cost += cost;
+			current_day_time += travel_time;
+			
+			BacktrackResult res = visit_monument_backtrack(current_monument);
+			
+			switch(res) {
+			case OK:
+				return res;
+			case GOTO_HOTEL:
+				financial_cost -= cost;
+				current_day_time -= travel_time;
+				return BacktrackResult.OK;
+			}
+
+			return res;
+		}
+	}
+	
+	private BacktrackResult visit_monument_backtrack_lastmonument(int current_monument) {
+		System.out.println("Backtrack last monument (" + current_monument + ")");
+		// if last monument, try to go to hotel
+			// if succeeds, end
+			// else fails, previous monument must return to the hotel
+		
+		Monument m = sorted_monuments.get(current_monument);
+		LinkedList<DirectedEdge> path = Dijkstra.shortestPath(graph, m.graphnode, hotel_node);
+		double dist = 0;
+		for(int j = 0; j < path.size(); ++j) {
+			dist += path.get(j).getWeight();
+		}
+		
+		Transport curr_transport = transports.get(m.transport);
+		double travel_time = curr_transport.timeInHours(dist);
+		double cost = curr_transport.cost(dist);
+    	
+		if(travel_time + m.visit_time_hours + current_day_time > hours_per_day || cost + financial_cost > financial_limit) {
+			return BacktrackResult.GOTO_HOTEL;
+		}
+    	
+		current_day_time += travel_time + m.visit_time_hours;
+		financial_cost += cost;
+		value_sum += m.value;
+		
+		return BacktrackResult.OK;
+	}
+	
+	private BacktrackResult visit_monument_backtrack_normalmonument(int current_monument) {
+		System.out.println("Backtrack normal monument (" + current_monument + ")");
+		// try to go to next monument
+			// if succeeds, go to it
+			// else try to return to hotel
+				// if succeeds terminate
+				// else backtrack
+		
+		Monument m = sorted_monuments.get(current_monument);
+		Monument next_m = sorted_monuments.get(current_monument + 1);
+		
+		LinkedList<DirectedEdge> path = Dijkstra.shortestPath(graph, m.graphnode, next_m.graphnode);
+		double dist = 0;
+		for(int j = 0; j < path.size(); ++j) {
+			dist += path.get(j).getWeight();
+		}
+		
+		Transport curr_transport = transports.get(m.transport);
+		double travel_time = curr_transport.timeInHours(dist);
+		double cost = curr_transport.cost(dist);
+		
+		if(cost + financial_cost > financial_limit || travel_time + current_day_time > hours_per_day) {
+			path = Dijkstra.shortestPath(graph, m.graphnode, hotel_node);
+			dist = 0;
+			for(int j = 0; j < path.size(); ++j) {
+				dist += path.get(j).getWeight();
+			}
+			
+			curr_transport = transports.get(m.transport);
+			travel_time = curr_transport.timeInHours(dist);
+			cost = curr_transport.cost(dist);
+			
+			if(cost + financial_cost > financial_limit || current_day_time + travel_time + m.visit_time_hours > hours_per_day) {
+				System.out.println("GOTO_HOTEL");
+				return BacktrackResult.GOTO_HOTEL;
+				
+			}
+			
+			financial_cost += cost;
+			current_day++;
+			current_day_time = 0;
+			value_sum += m.value;
+			
+			BacktrackResult res = visit_monument_backtrack(current_monument + 1);
+			System.out.println("Visit next " + res.toString());
+			
+			switch(res) {
+			case OK:
+				return res;
+			case GOTO_HOTEL:
+				financial_cost -= cost;
+				current_day_time -= travel_time;
+				value_sum -= m.value;
+				return BacktrackResult.GOTO_HOTEL;
+			}
+
+			return res;
+		} else {
+			double prev_cost = financial_cost;
+			double prev_day_time = current_day_time;
+			double prev_value = value_sum;
+			
+			financial_cost += cost;
+			current_day_time += travel_time + m.visit_time_hours;
+			value_sum += m.value;
+			
+			BacktrackResult res = visit_monument_backtrack(current_monument + 1);
+			System.out.println("Visit next 2 " + res.toString());
+			
+			switch(res) {
+			case OK:
+				return res;
+			case GOTO_HOTEL:
+				financial_cost = prev_cost;
+				current_day_time = prev_day_time;
+				value_sum = prev_value;
+				
+				path = Dijkstra.shortestPath(graph, m.graphnode, hotel_node);
+				dist = 0;
+				for(int j = 0; j < path.size(); ++j) {
+					dist += path.get(j).getWeight();
+				}
+				
+				curr_transport = transports.get(m.transport);
+				travel_time = curr_transport.timeInHours(dist);
+				cost = curr_transport.cost(dist);
+				
+				if(cost + financial_cost > financial_limit || current_day_time + travel_time + m.visit_time_hours > hours_per_day) {
+					return BacktrackResult.GOTO_HOTEL;
+				}
+				
+				financial_cost += cost;
+				current_day++;
+				current_day_time = 0;
+				value_sum += m.value;
+				
+				return BacktrackResult.OK;
+			}
+
+			return res;
+		}		
+	}
+	
+	public double adaptation_old(Graph<GraphNode, DirectedEdge> graph, ArrayList<Monument> monument_ids, double hours_per_day, double financial_limit, ArrayList<Transport> transports, ArrayList<Integer> split_points, GraphNode hotel_node) {
 		int penalty = 0; // 1 - slight, 2 - severe
 		
 		// TODO verificar se penalizações se adequam

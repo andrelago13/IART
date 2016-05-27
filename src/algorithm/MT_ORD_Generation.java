@@ -66,9 +66,17 @@ public class MT_ORD_Generation {
 		
 		double current_adaptation = 0;
 		for(int i = 0; i < chromossomes.size(); ++i) {
-			MT_ORD_Chromossome c = chromossomes.get(i);
-			current_adaptation = c.adaptation/total_adaptation + current_adaptation;
-			c.slice = current_adaptation;
+			if(total_adaptation == 0) {
+				MT_ORD_Chromossome c = chromossomes.get(i);
+				current_adaptation = i/chromossomes.size();
+				c.slice = current_adaptation;
+			} else {
+				MT_ORD_Chromossome c = chromossomes.get(i);
+				current_adaptation = c.adaptation/total_adaptation + current_adaptation;
+				c.slice = current_adaptation;
+				System.out.println("Adapt " + c.adaptation);
+				System.out.println("Slice " + c.slice);
+			}
 		}
 		
 		// slice now holds the top interval for each chromossome to be selected
