@@ -44,6 +44,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import algorithm.MT_ORD_Chromossome;
 import algorithm.MT_ORD_Factory;
 import algorithm.MT_ORD_Generation;
+import algorithm.Solution;
 import algorithm.Transport;
 import parsing.OSMParser;
 
@@ -402,7 +403,7 @@ public class GraphPanel extends JPanel {
 		return monuments;
 	}
 
-	public void solve(int number_days, int hours_per_day, double financial_limit, int population_size, int elite, int number_generations, double mutation_prob) {
+	public Solution solve(int number_days, int hours_per_day, double financial_limit, int population_size, int elite, int number_generations, double mutation_prob) {
 		System.out.println("Starting execution of genetic algorithms.");
 		long startTime = System.currentTimeMillis();
 		
@@ -431,6 +432,8 @@ public class GraphPanel extends JPanel {
 		for(int i = 0; i < generations.size(); ++i) {
 			System.out.println("" + '\t' + "Gen#" + i + " -> " + generations.get(i).getStats());
 		}
+		
+		return new Solution();
 	}
 	
 	
