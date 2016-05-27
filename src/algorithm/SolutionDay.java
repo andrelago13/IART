@@ -10,6 +10,8 @@ public class SolutionDay {
 	private ArrayList<Monument> monuments;
 	
 	public int totalValue = -1;
+	public double totalTime = 0;
+	public double totalMoney = 0;
 	
 	public SolutionDay() {
 		transports = new ArrayList<Transport>();
@@ -48,7 +50,7 @@ public class SolutionDay {
 			result += "" + '\t' + '\t' + m.getName() + " (" + m.value + ")" + '\n';
 		}
 		result += "" + '\t' + transports.get(transports.size()-1).name + '\n';
-		result += "Total value: " + totalValue + '\n';
+		result += "Total value: " + totalValue + "; Total cost: " + totalMoney + "; Total time: " + totalTime + '\n';
 		
 		return result;
 	}

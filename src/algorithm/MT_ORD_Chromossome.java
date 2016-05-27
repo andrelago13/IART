@@ -366,6 +366,8 @@ public class MT_ORD_Chromossome implements Cloneable {
 
 			if(solution != null) {
 				solution_day.add(curr_transport);
+				solution_day.totalMoney += cost;
+				solution_day.totalTime += travel_time;
 			}
 			
 			BacktrackResult res = visit_monument_backtrack(current_monument);
@@ -411,6 +413,8 @@ public class MT_ORD_Chromossome implements Cloneable {
 		if(solution != null && solution_day != null) {
 			solution_day.add(curr_transport);
 			solution_day.add(m);
+			solution_day.totalMoney += cost;
+			solution_day.totalTime += travel_time;
 		}
 		current_day_time += travel_time + m.visit_time_hours;
 		financial_cost += cost;
@@ -458,6 +462,8 @@ public class MT_ORD_Chromossome implements Cloneable {
 			if(solution != null && solution_day != null) {
 				solution_day.add(m);
 				solution_day.add(curr_transport);
+				solution_day.totalMoney += cost;
+				solution_day.totalTime += travel_time + m.visit_time_hours;
 			}
 			
 			financial_cost += cost;
@@ -479,6 +485,8 @@ public class MT_ORD_Chromossome implements Cloneable {
 				if(solution != null && solution_day != null) {
 					solution_day.remove(m);
 					solution_day.remove(curr_transport);
+					solution_day.totalMoney -= cost;
+					solution_day.totalTime -= (travel_time + m.visit_time_hours);
 				}
 				
 				return BacktrackResult.GOTO_HOTEL;
@@ -498,6 +506,8 @@ public class MT_ORD_Chromossome implements Cloneable {
 			if(solution != null && solution_day != null) {
 				solution_day.add(m);
 				solution_day.add(curr_transport);
+				solution_day.totalMoney += cost;
+				solution_day.totalTime += travel_time + m.visit_time_hours;
 			}
 			
 			BacktrackResult res = visit_monument_backtrack(current_monument + 1);
@@ -524,6 +534,8 @@ public class MT_ORD_Chromossome implements Cloneable {
 					if(solution != null && solution_day != null) {
 						solution_day.remove(m);
 						solution_day.remove(curr_transport);
+						solution_day.totalMoney -= cost;
+						solution_day.totalTime -= (travel_time + m.visit_time_hours);
 					}
 					return BacktrackResult.GOTO_HOTEL;
 				}
