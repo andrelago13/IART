@@ -74,8 +74,6 @@ public class MT_ORD_Generation {
 				MT_ORD_Chromossome c = chromossomes.get(i);
 				current_adaptation = c.adaptation/total_adaptation + current_adaptation;
 				c.slice = current_adaptation;
-				System.out.println("Adapt " + c.adaptation);
-				System.out.println("Slice " + c.slice);
 			}
 		}
 		
@@ -219,5 +217,17 @@ public class MT_ORD_Generation {
 		double average_adaptation = total_adaptation/chromossomes.size();
 		
 		return "Best adaptation: " + max_adaptation + "; Average adaptation: " + average_adaptation + "; Min adaptation: " + min_adaptation + "; Num invalids: " + num_invalids + ";";
+	}
+
+	public MT_ORD_Chromossome getBest() {
+		MT_ORD_Chromossome best = null;
+		
+		for(MT_ORD_Chromossome c : chromossomes) {
+			if(best == null || c.adaptation > best.adaptation) {
+				best = c;
+			}
+		}
+		
+		return best;
 	}
 }

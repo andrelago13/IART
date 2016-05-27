@@ -433,7 +433,8 @@ public class GraphPanel extends JPanel {
 			System.out.println("" + '\t' + "Gen#" + i + " -> " + generations.get(i).getStats());
 		}
 		
-		return new Solution();
+		MT_ORD_Chromossome best_individual = gen.getBest();
+		return best_individual.getSolution(graph, monuments, hours_per_day, financial_limit, transports, best_individual.getCrossovers(), hotel_node);
 	}
 	
 	
