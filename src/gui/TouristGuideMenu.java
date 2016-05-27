@@ -75,10 +75,15 @@ public class TouristGuideMenu implements ProgressListener {
 		
 		panel_1 = new JPanel();
 		panel_1.setBackground(Color.LIGHT_GRAY);
-		panel_1.setBounds(411, 573, 156, 67);
+		panel_1.setBounds(411, 540, 156, 100);
 		frame.getContentPane().add(panel_1);
 		
 		JButton btnPortoLarge = new JButton("Porto (Large)");
+		btnPortoLarge.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				TouristGuide_PortoLarge.ScreenStart();
+			}
+		});
 		panel_1.add(btnPortoLarge);
 		
 		JButton btnPortosmall = new JButton("Porto (Small)");
@@ -89,16 +94,20 @@ public class TouristGuideMenu implements ProgressListener {
 		});
 		panel_1.add(btnPortosmall);
 		
+		JButton btnTestCase = new JButton("Test case");
+		btnTestCase.setPreferredSize(new Dimension(109, 25));
+		btnTestCase.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				TouristGuide_TestCase.ScreenStart();
+			}
+		});
+		panel_1.add(btnTestCase);
+		
 		JLabel label = new JLabel("");
 		label.setBounds(0, 0, 992, 725);
 		frame.getContentPane().add(label);
 		label.setIcon(new ImageIcon("data/background.jpg"));
 		
-		btnPortoLarge.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				TouristGuide_PortoLarge.ScreenStart();
-			}
-		});
 	}
 	
 	private void setDefaultCloseOperation(int exitOnClose) {
@@ -121,7 +130,7 @@ public class TouristGuideMenu implements ProgressListener {
 					updateProgress(100);
 					removeProgressBar();
 				} catch (IOException | XmlPullParserException e) {
-					JOptionPane.showMessageDialog(null, "Unable to load map \"data/porto-large.osm\"", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Unable to load map", "Error", JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				}
 		    }
