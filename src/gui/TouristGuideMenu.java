@@ -24,6 +24,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
 import java.awt.SystemColor;
+import java.awt.Toolkit;
+
 import javax.swing.JTextPane;
 import java.awt.Font;
 
@@ -62,23 +64,24 @@ public class TouristGuideMenu implements ProgressListener {
 	 */
 	private void initialize() {
         
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 		
 		frame = new JFrame();
 		frame.setBounds(100, 100, 1000, 700);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		frame.setLocation(screenSize.width/2-frame.getSize().width/2, screenSize.height/2-frame.getSize().height/2);
 		frame.getContentPane().setLayout(null);
 		
 		panel = new GraphPanel(frame);
 		frame.getContentPane().add(panel);
 		
 		panel_1 = new JPanel();
-		panel_1.setBackground(Color.LIGHT_GRAY);
+		panel_1.setBackground(new Color(0, 102, 153));
 		panel_1.setBounds(411, 540, 156, 100);
 		frame.getContentPane().add(panel_1);
 		
 		JButton btnPortoLarge = new JButton("Porto (Large)");
+		btnPortoLarge.setBackground(Color.LIGHT_GRAY);
 		btnPortoLarge.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				TouristGuide_PortoLarge.ScreenStart();
@@ -87,6 +90,7 @@ public class TouristGuideMenu implements ProgressListener {
 		panel_1.add(btnPortoLarge);
 		
 		JButton btnPortosmall = new JButton("Porto (Small)");
+		btnPortosmall.setBackground(Color.LIGHT_GRAY);
 		btnPortosmall.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				TouristGuide_PortoSmall.ScreenStart();
@@ -95,6 +99,7 @@ public class TouristGuideMenu implements ProgressListener {
 		panel_1.add(btnPortosmall);
 		
 		JButton btnTestCase = new JButton("Test case");
+		btnTestCase.setBackground(Color.LIGHT_GRAY);
 		btnTestCase.setPreferredSize(new Dimension(109, 25));
 		btnTestCase.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -110,10 +115,6 @@ public class TouristGuideMenu implements ProgressListener {
 		
 	}
 	
-	private void setDefaultCloseOperation(int exitOnClose) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	private void loadMap(String graphpath, String monumentspath, String backgroundPath, int x_pos, int y_pos, double x_scale, double y_scale) {	
 		final ProgressListener pl = this;
