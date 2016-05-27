@@ -9,6 +9,8 @@ public class SolutionDay {
 	private ArrayList<Transport> transports;
 	private ArrayList<Monument> monuments;
 	
+	public int totalValue = -1;
+	
 	public SolutionDay() {
 		transports = new ArrayList<Transport>();
 		monuments = new ArrayList<Monument>();
@@ -36,17 +38,17 @@ public class SolutionDay {
 	
 	public String toString() {
 		String result = "";
-		int total_value = 0;
+		totalValue = 0;
 		
 		for(int i = 0; i < monuments.size(); ++i) {
 			Monument m = monuments.get(i);
 			Transport t = transports.get(i);
-			total_value += m.value;
+			totalValue += m.value;
 			result += "" + '\t' + t.name + '\n';
 			result += "" + '\t' + '\t' + m.getName() + " (" + m.value + ")" + '\n';
 		}
 		result += "" + '\t' + transports.get(transports.size()-1).name + '\n';
-		result += "Total value: " + total_value + '\n';
+		result += "Total value: " + totalValue + '\n';
 		
 		return result;
 	}

@@ -12,15 +12,13 @@ public class Solution {
 	
 	public String toString() {
 		String result = "";
+		int totalValue = 0;
 		
 		for(int i = 0; i < days.size(); ++i) {
-			if(days.get(i) == null) {
-				System.out.println("null");
-			} else {
-				System.out.println("not null");
-			}
 			result += "Day " + i + '\n' + days.get(i).toString();
+			totalValue += days.get(i).totalValue;
 		}
+		result += "Total trip value: " + totalValue + "." + '\n';
 		
 		return result;
 	}
