@@ -24,6 +24,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
 import java.awt.SystemColor;
+import java.awt.Toolkit;
+
 import javax.swing.JTextPane;
 import java.awt.Font;
 
@@ -62,12 +64,12 @@ public class TouristGuideMenu implements ProgressListener {
 	 */
 	private void initialize() {
         
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 		
 		frame = new JFrame();
 		frame.setBounds(100, 100, 1000, 700);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		frame.setLocation(screenSize.width/2-frame.getSize().width/2, screenSize.height/2-frame.getSize().height/2);
 		frame.getContentPane().setLayout(null);
 		
 		panel = new GraphPanel(frame);
@@ -113,10 +115,6 @@ public class TouristGuideMenu implements ProgressListener {
 		
 	}
 	
-	private void setDefaultCloseOperation(int exitOnClose) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	private void loadMap(String graphpath, String monumentspath, String backgroundPath, int x_pos, int y_pos, double x_scale, double y_scale) {	
 		final ProgressListener pl = this;

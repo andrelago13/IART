@@ -30,6 +30,8 @@ import javax.swing.plaf.metal.MetalSliderUI;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+import algorithm.Solution;
+
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -338,7 +340,8 @@ public class TouristGuide_Choice implements ProgressListener {
 		JButton btnSolve = new JButton("Solve");
 		btnSolve.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				solve();
+				Solution sol = solve();
+				TouristGuide_Results.Results(sol);
 			}
 		});
 		btnSolve.setBounds(58, 539, 89, 23);
@@ -348,7 +351,7 @@ public class TouristGuide_Choice implements ProgressListener {
 		frame.repaint();
 	}
 	
-	private void solve() {
+	private Solution solve() {
 		if(current_monument != null) {
 			current_monument.graphnode.processed = false;
 			frame.revalidate();
@@ -362,7 +365,7 @@ public class TouristGuide_Choice implements ProgressListener {
 		int elite = Integer.parseInt(textField_Chromossomes.getText());
 		int number_generations = Integer.parseInt(textField_NrOfGenerations.getText());;
 		double mutation_prob = Double.parseDouble(textField_Mutation.getText());
-		panel.solve(number_days, hours_per_day, financial_limit, population_size, elite, number_generations, mutation_prob);
+		return panel.solve(number_days, hours_per_day, financial_limit, population_size, elite, number_generations, mutation_prob);
 	}
 	
 	private void initProgressBar() {
