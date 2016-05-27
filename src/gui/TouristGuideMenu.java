@@ -74,11 +74,12 @@ public class TouristGuideMenu implements ProgressListener {
 		frame.getContentPane().add(panel);
 		
 		panel_1 = new JPanel();
-		panel_1.setBackground(Color.LIGHT_GRAY);
+		panel_1.setBackground(new Color(0, 102, 153));
 		panel_1.setBounds(411, 540, 156, 100);
 		frame.getContentPane().add(panel_1);
 		
 		JButton btnPortoLarge = new JButton("Porto (Large)");
+		btnPortoLarge.setBackground(Color.LIGHT_GRAY);
 		btnPortoLarge.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				TouristGuide_PortoLarge.ScreenStart();
@@ -87,6 +88,7 @@ public class TouristGuideMenu implements ProgressListener {
 		panel_1.add(btnPortoLarge);
 		
 		JButton btnPortosmall = new JButton("Porto (Small)");
+		btnPortosmall.setBackground(Color.LIGHT_GRAY);
 		btnPortosmall.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				TouristGuide_PortoSmall.ScreenStart();
@@ -95,6 +97,7 @@ public class TouristGuideMenu implements ProgressListener {
 		panel_1.add(btnPortosmall);
 		
 		JButton btnTestCase = new JButton("Test case");
+		btnTestCase.setBackground(Color.LIGHT_GRAY);
 		btnTestCase.setPreferredSize(new Dimension(109, 25));
 		btnTestCase.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
