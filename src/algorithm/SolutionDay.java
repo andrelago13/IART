@@ -50,7 +50,7 @@ public class SolutionDay {
 			result += "" + '\t' + '\t' + m.getName() + " (" + m.value + ")" + '\n';
 		}
 		result += "" + '\t' + transports.get(transports.size()-1).name + '\n';
-		result += "Total value: " + totalValue + "; Total cost: " + totalMoney + "; Total time: " + totalTime + '\n';
+		result += '\n' + "Total value: " + totalValue + "; Total cost: " + totalMoney + "; Total time: " + totalTime + '\n';
 		
 		return result;
 	}
