@@ -1,5 +1,3 @@
 # IART
 
-IART is awesome!
-
-PS: Lago is also awesome! ;) (y) :p :D
+Genetic algorithms for holiday itinerary calculation.
